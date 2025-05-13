@@ -38,7 +38,7 @@ public class EmployeeController {
 
 
     @PostMapping
-    public ResponseEntity<?> postEmployeee(@RequestBody EmployeeModel employee) {
+    public ResponseEntity<?> postEmployee(@RequestBody EmployeeModel employee) {
         EmployeeModel employeeCreated = employeeService.save(employee);
         return ResponseEntity.ok(employeeCreated);
     }
