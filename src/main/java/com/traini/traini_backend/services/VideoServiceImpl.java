@@ -1,5 +1,6 @@
 package com.traini.traini_backend.services;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,10 @@ public class VideoServiceImpl implements VideoService {
     @Autowired
     private VideoRepository videoRepository;
 
+    @Autowired
+    private FirebaseService firebaseService;
+
+
     @Override
     public List<VideoModel> findAll() {
         return (List<VideoModel>) videoRepository.findAll();
@@ -28,15 +33,31 @@ public class VideoServiceImpl implements VideoService {
         return videoRepository.findById(id).orElseThrow( () -> new EntityNotFoundException(String.format("The video with id %s not found.", id)) );
     }
 
-    @Override
-    public VideoModel save(VideoModel video) {
 
+    @Override
+    public VideoModel save(VideoModel video)  {
         videoRepository.findByTitle(video.getTitle())
             .ifPresent( videoDB -> {
                 throw new ValidationException(String.format("Video with title %s already exists", videoDB.getTitle()));
             });
+        
+        if( video.getFile() == null ) throw new ValidationException("Video file is required");
 
-        return videoRepository.save(video);
+        if( video.getTitle() == null ) throw new ValidationException("Video title is required");
+
+        if( video.getDescription() == null ) throw new ValidationException("Video description is required");
+
+        String title = video.getTitle();
+
+        video.setTitle(title.replaceAll("[^a-zA-Z0-9]", ""));
+
+        try {
+            firebaseService.uploadVideo(video.getFile(), video.getTitle());
+            return videoRepository.save(video);
+        } catch (IOException e) {
+
+            throw new RuntimeException("Failed to upload video file", e);
+        }  
     }
 
     @Override

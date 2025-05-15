@@ -2,6 +2,8 @@ package com.traini.traini_backend.models;
 
 import java.time.LocalDateTime;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,6 +23,9 @@ public class VideoModel {
     
     @Column(nullable = false)
     private String description;
+
+    @Column(nullable = false)
+    private MultipartFile file;
     
     @Column(name = "upload_date")
     private LocalDateTime uploadDate = LocalDateTime.now();
@@ -57,6 +62,14 @@ public class VideoModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public MultipartFile getFile() {
+        return file;
+    }
+
+    public void setFile(MultipartFile file) {
+        this.file = file;
     }
 
     public LocalDateTime getUploadDate() {
