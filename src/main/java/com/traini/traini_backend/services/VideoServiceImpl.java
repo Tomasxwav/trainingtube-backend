@@ -11,7 +11,6 @@ import com.traini.traini_backend.repository.VideoRepository;
 import com.traini.traini_backend.services.interfaces.VideoService;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ValidationException;
 
 @Service
 public class VideoServiceImpl implements VideoService {
@@ -33,7 +32,7 @@ public class VideoServiceImpl implements VideoService {
         return videoRepository.findById(id).orElseThrow( () -> new EntityNotFoundException(String.format("The video with id %s not found.", id)) );
     }
 
-
+/* 
     @Override
     public VideoModel save(VideoModel video)  {
         videoRepository.findByTitle(video.getTitle())
@@ -41,7 +40,6 @@ public class VideoServiceImpl implements VideoService {
                 throw new ValidationException(String.format("Video with title %s already exists", videoDB.getTitle()));
             });
         
-        if( video.getFile() == null ) throw new ValidationException("Video file is required");
 
         if( video.getTitle() == null ) throw new ValidationException("Video title is required");
 
@@ -51,13 +49,9 @@ public class VideoServiceImpl implements VideoService {
 
         video.setTitle(title.replaceAll("[^a-zA-Z0-9]", ""));
 
-        try {
-            firebaseService.uploadVideo(video.getFile(), video.getTitle());
-            return videoRepository.save(video);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to upload video file", e);
-        }  
-    }
+
+
+    } */
 
     @Override
     public VideoModel update(Long id, VideoModel video) {

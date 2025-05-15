@@ -3,51 +3,59 @@ package com.traini.traini_backend.controllers;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.google.api.pathtemplate.ValidationException;
 import com.traini.traini_backend.models.VideoModel;
-import com.traini.traini_backend.services.interfaces.VideoService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-
+import com.traini.traini_backend.repository.VideoRepository;
+import com.traini.traini_backend.services.FirebaseService;
 
 @RestController
 @RequestMapping("/videos")
 public class VideosController {
 
-    @Autowired
-    private VideoService videoService;
+    private final VideoRepository videoRepository;
+    private final FirebaseService firebaseService;
+
+    public VideosController(VideoRepository videoRepository, FirebaseService firebaseService) {
+        this.videoRepository = videoRepository;
+        this.firebaseService = firebaseService;
+    }
 
     @GetMapping
-    public ResponseEntity<List<VideoModel>> GetVideos() {
-        List<VideoModel> videos = videoService.findAll();
+    public ResponseEntity<List<VideoModel>> getVideos() {
+        List<VideoModel> videos = (List<VideoModel>) videoRepository.findAll();
         return new ResponseEntity<>(videos, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<VideoModel> GetVideo(@PathVariable String id) {
-        VideoModel video = videoService.findById(Long.parseLong(id));
-        return new ResponseEntity<>(video, HttpStatus.OK);
+    public ResponseEntity<VideoModel> getVideo(@PathVariable String id) {
+        return videoRepository.findById(Long.parseLong(id))
+                .map(video -> new ResponseEntity<>(video, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
-    public ResponseEntity<?> uploadVideo(@RequestBody VideoModel video) {
-       try {
-            VideoModel savedVideo = videoService.save(video);
-            return ResponseEntity.ok(savedVideo);
-        } catch (ValidationException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error inesperado: " + e.getMessage());
-        }
+    public ResponseEntity<VideoModel> uploadVideo(
+            @RequestParam("video") MultipartFile file,
+            @RequestParam String title,
+            @RequestParam String description) throws IOException {
+        
+        String firebaseUrl = firebaseService.uploadFile(file, "videos");
+        
+        VideoModel video = new VideoModel();
+        video.setTitle(title);
+        video.setDescription(description);
+        video.setFirebaseUrl(firebaseUrl);
+        video.setFirebasePath("tutoriales/" + video.getTitle());
+        video.setFileName(video.getTitle());
+        video.setFileType(file.getContentType());
+        video.setFileSize(file.getSize());
+        
+        VideoModel savedVideo = videoRepository.save(video);
+        
+        return ResponseEntity.ok(savedVideo);
     }
-    
 }

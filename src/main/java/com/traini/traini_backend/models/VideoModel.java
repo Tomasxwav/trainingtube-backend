@@ -2,8 +2,6 @@ package com.traini.traini_backend.models;
 
 import java.time.LocalDateTime;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,22 +21,24 @@ public class VideoModel {
     
     @Column(nullable = false)
     private String description;
-
-    @Column(nullable = false)
-    private MultipartFile file;
+    
+    @Column(name = "firebase_url") 
+    private String firebaseUrl;
+    
+    @Column(name = "firebase_path") 
+    private String firebasePath;
+    
+    @Column(name = "file_name")
+    private String fileName;
+    
+    @Column(name = "file_type") 
+    private String fileType;
+    
+    @Column(name = "file_size")
+    private long fileSize;
     
     @Column(name = "upload_date")
     private LocalDateTime uploadDate = LocalDateTime.now();
-
-
-    // Getters, setters y constructores
-    public VideoModel() {
-    }
-
-    public VideoModel(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
 
     public Long getId() {
         return id;
@@ -64,12 +64,44 @@ public class VideoModel {
         this.description = description;
     }
 
-    public MultipartFile getFile() {
-        return file;
+    public String getFirebaseUrl() {
+        return firebaseUrl;
     }
 
-    public void setFile(MultipartFile file) {
-        this.file = file;
+    public void setFirebaseUrl(String firebaseUrl) {
+        this.firebaseUrl = firebaseUrl;
+    }
+
+    public String getFirebasePath() {
+        return firebasePath;
+    }
+
+    public void setFirebasePath(String firebasePath) {
+        this.firebasePath = firebasePath;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
+
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
     }
 
     public LocalDateTime getUploadDate() {
@@ -79,7 +111,5 @@ public class VideoModel {
     public void setUploadDate(LocalDateTime uploadDate) {
         this.uploadDate = uploadDate;
     }
-
-
-
+    
 }
