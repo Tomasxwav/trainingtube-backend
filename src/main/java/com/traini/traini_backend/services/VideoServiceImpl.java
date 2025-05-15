@@ -55,7 +55,6 @@ public class VideoServiceImpl implements VideoService {
             firebaseService.uploadVideo(video.getFile(), video.getTitle());
             return videoRepository.save(video);
         } catch (IOException e) {
-
             throw new RuntimeException("Failed to upload video file", e);
         }  
     }
