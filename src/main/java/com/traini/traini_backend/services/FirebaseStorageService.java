@@ -12,7 +12,7 @@ public class FirebaseStorageService {
     @Value("${firebase.storage.bucket-name}")
     private String bucketName;
 
-    private final Storage storage;
+    private Storage storage;
 
     public FirebaseStorageService(Storage storage) {
         this.storage = storage;
