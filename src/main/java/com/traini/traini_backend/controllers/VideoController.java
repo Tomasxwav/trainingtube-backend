@@ -28,4 +28,13 @@ public class VideoController {
             return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
         }
     }
+
+    @GetMapping
+    public ResponseEntity<?> getAllVideos() {
+        try {
+            return ResponseEntity.ok(videoService.findAll());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
+    }
 }
