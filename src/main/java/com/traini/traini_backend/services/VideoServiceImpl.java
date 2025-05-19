@@ -1,78 +1,38 @@
 package com.traini.traini_backend.services;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.traini.traini_backend.models.VideoModel;
 import com.traini.traini_backend.repository.VideoRepository;
 import com.traini.traini_backend.services.interfaces.VideoService;
 
-import jakarta.persistence.EntityNotFoundException;
-
 @Service
 public class VideoServiceImpl implements VideoService {
 
     @Autowired
-    private VideoRepository videoRepository;
+    private FirebaseStorageService firebaseStorageService;
 
     @Autowired
-    private FirebaseService firebaseService;
-
+    private VideoRepository videoRepository; 
 
     @Override
-    public List<VideoModel> findAll() {
-        return (List<VideoModel>) videoRepository.findAll();
+    public String uploadAndSaveVideo(MultipartFile file, String title, String description) throws Exception {
+        // 1. Subir el video a Firebase (delegado a FirebaseStorageService)
+        String videoUrl = firebaseStorageService.uploadVideo(file);
+
+        // 2. Guardar metadatos en la base de datos
+        VideoModel video = new VideoModel();
+        video.setTitle(title);
+        video.setDescription(description);
+        video.setVideoUrl(videoUrl);
+        video.setUploadDate(new Date());
+
+        videoRepository.save(video);
+
+        return videoUrl;
     }
-
-    @Override
-    public VideoModel findById(Long id) {
-        return videoRepository.findById(id).orElseThrow( () -> new EntityNotFoundException(String.format("The video with id %s not found.", id)) );
-    }
-
-/* 
-    @Override
-    public VideoModel save(VideoModel video)  {
-        videoRepository.findByTitle(video.getTitle())
-            .ifPresent( videoDB -> {
-                throw new ValidationException(String.format("Video with title %s already exists", videoDB.getTitle()));
-            });
-        
-
-        if( video.getTitle() == null ) throw new ValidationException("Video title is required");
-
-        if( video.getDescription() == null ) throw new ValidationException("Video description is required");
-
-        String title = video.getTitle();
-
-        video.setTitle(title.replaceAll("[^a-zA-Z0-9]", ""));
-
-
-
-    } */
-
-    @Override
-    public VideoModel update(Long id, VideoModel video) {
-        VideoModel videoFound = findById(id);
-
-        if( video.getTitle() != null ) videoFound.setTitle(video.getTitle());
-        if( video.getDescription() != null ) videoFound.setDescription(video.getDescription());
-        if( video.getUploadDate() != null ) videoFound.setUploadDate(video.getUploadDate());
-
-
-        return videoRepository.save(videoFound);
-
-    }
-
-    @Override
-    public VideoModel delete(Long id) {
-        VideoModel videoFound = findById(id);
-        videoRepository.deleteById(id);
-        return videoFound;
-    }
-    
-
-
 }

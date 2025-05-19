@@ -1,52 +1,31 @@
 package com.traini.traini_backend.models;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "videos")
 public class VideoModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(nullable = false)
+
     private String title;
-    
-    @Column(nullable = false)
     private String description;
-    
-    @Column(name = "firebase_url") 
-    private String firebaseUrl;
-    
-    @Column(name = "firebase_path") 
-    private String firebasePath;
-    
-    @Column(name = "file_name")
-    private String fileName;
-    
-    @Column(name = "file_type") 
-    private String fileType;
-    
-    @Column(name = "file_size")
-    private long fileSize;
-    
+
+    @Column(name = "url_video")
+    private String videoUrl;  // URL de Firebase Storage para el video
+
+    @Column(name = "url_thumbnail")
+    private String urlThumbnail;  // URL de Firebase Storage para el thumbnail
+
     @Column(name = "upload_date")
-    private LocalDateTime uploadDate = LocalDateTime.now();
+    private Date uploadDate;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getTitle() {
         return title;
@@ -63,53 +42,22 @@ public class VideoModel {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public String getFirebaseUrl() {
-        return firebaseUrl;
+    
+    public String getVideoUrl() {
+        return videoUrl;
     }
 
-    public void setFirebaseUrl(String firebaseUrl) {
-        this.firebaseUrl = firebaseUrl;
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
     }
 
-    public String getFirebasePath() {
-        return firebasePath;
-    }
-
-    public void setFirebasePath(String firebasePath) {
-        this.firebasePath = firebasePath;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getFileType() {
-        return fileType;
-    }
-
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
-    }
-
-    public long getFileSize() {
-        return fileSize;
-    }
-
-    public void setFileSize(long fileSize) {
-        this.fileSize = fileSize;
-    }
-
-    public LocalDateTime getUploadDate() {
+    public Date getUploadDate() {
         return uploadDate;
     }
 
-    public void setUploadDate(LocalDateTime uploadDate) {
+    public void setUploadDate(Date uploadDate) {
         this.uploadDate = uploadDate;
     }
-    
+
+
 }

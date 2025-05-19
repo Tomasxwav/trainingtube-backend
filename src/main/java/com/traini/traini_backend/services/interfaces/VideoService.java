@@ -1,15 +1,7 @@
 package com.traini.traini_backend.services.interfaces;
 
-import java.util.List;
-
-import com.traini.traini_backend.models.VideoModel;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface VideoService {
-        
-    List<VideoModel> findAll();
-    VideoModel findById(Long id);
-    /* VideoModel save(VideoModel video); */
-    VideoModel update(Long id, VideoModel video);
-    VideoModel delete(Long id);
-    
+    String uploadAndSaveVideo(MultipartFile file, String title, String description) throws Exception;
 }
