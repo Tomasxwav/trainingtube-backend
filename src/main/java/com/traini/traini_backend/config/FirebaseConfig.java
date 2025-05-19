@@ -16,7 +16,7 @@ import java.io.IOException;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${firebase.bucket-name}") //  application.properties
+    @Value("${firebase.storage.bucket-name}") //  application.properties
     private String bucketName;
 
     @PostConstruct

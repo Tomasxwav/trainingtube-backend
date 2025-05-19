@@ -16,7 +16,7 @@ public class FirebaseStorageService {
     @Autowired
     private Storage storage;
 
-    @Value("${firebase.bucket-name}")
+    @Value("${firebase.storage.bucket-name}")
     private String bucketName;
 
     public String uploadVideo(MultipartFile file) throws IOException {
