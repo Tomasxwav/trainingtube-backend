@@ -1,38 +1,38 @@
 package com.traini.traini_backend.services;
 
-import com.traini.traini_backend.models.VideoModel;
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.traini.traini_backend.models.VideoModel;
 import com.traini.traini_backend.repository.VideoRepository;
+import com.traini.traini_backend.services.interfaces.VideoService;
 
 @Service
-public class VideoServiceImpl {
+public class VideoServiceImpl implements VideoService {
 
-    private VideoRepository videoRepository;
-    private FirebaseStorageService firebaseService;
+    @Autowired
+    private FirebaseStorageService firebaseStorageService;
 
-    public VideoServiceImpl(VideoRepository videoRepository, FirebaseStorageService firebaseService) {
-        this.videoRepository = videoRepository;
-        this.firebaseService = firebaseService;
-    }
+    @Autowired
+    private VideoRepository videoRepository; 
 
-    public VideoModel saveVideo(String titulo, String descripcion, MultipartFile videoFile, MultipartFile thumbnailFile) {
-        try {
-            // Subir archivos a Firebase
-            String videoUrl = firebaseService.uploadVideo(videoFile);
-            String thumbnailUrl = firebaseService.uploadThumbnail(thumbnailFile);
+    @Override
+    public String uploadAndSaveVideo(MultipartFile file, String title, String description) throws Exception {
+        // 1. Subir el video a Firebase (delegado a FirebaseStorageService)
+        String videoUrl = firebaseStorageService.uploadVideo(file);
 
-            // Guardar metadatos en PostgreSQL
-            VideoModel video = new VideoModel();
-            video.setTitulo(titulo);
-            video.setDescripcion(descripcion);
-            video.setUrlVideo(videoUrl);
-            video.setUrlThumbnail(thumbnailUrl);
+        // 2. Guardar metadatos en la base de datos
+        VideoModel video = new VideoModel();
+        video.setTitle(title);
+        video.setDescription(description);
+        video.setVideoUrl(videoUrl);
+        video.setUploadDate(new Date());
 
-            return videoRepository.save(video);
-        } catch (Exception e) {
-            throw new RuntimeException("Error al guardar el video: " + e.getMessage());
-        }
+        videoRepository.save(video);
+
+        return videoUrl;
     }
 }

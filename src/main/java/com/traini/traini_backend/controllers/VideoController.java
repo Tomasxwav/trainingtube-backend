@@ -1,30 +1,35 @@
 package com.traini.traini_backend.controllers;
 
+import java.io.IOException;
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.traini.traini_backend.models.VideoModel;
+import com.traini.traini_backend.services.FirebaseStorageService;
 import com.traini.traini_backend.services.VideoServiceImpl;
 
 
 @RestController
-@RequestMapping("/api/videos")
+@RequestMapping("/videos")
 public class VideoController {
-    
-    private final VideoServiceImpl videoService;
-
-    public VideoController(VideoServiceImpl videoService) {
-        this.videoService = videoService;
-    }
+    @Autowired
+    private VideoServiceImpl videoService; 
 
     @PostMapping
-    public ResponseEntity<?> uploadVideo(
-            @RequestParam("titulo") String titulo,
-            @RequestParam("descripcion") String descripcion,
-            @RequestParam("video") MultipartFile videoFile,
-            @RequestParam("thumbnail") MultipartFile thumbnailFile) {
-        VideoModel video = videoService.saveVideo(titulo, descripcion, videoFile, thumbnailFile);
-        return ResponseEntity.ok(video);
+    public ResponseEntity<String> uploadVideo(
+            @RequestParam("video") MultipartFile file,
+            @RequestParam String title,
+            @RequestParam String description) {
+        
+        try {
+            String videoUrl = videoService.uploadAndSaveVideo(file, title, description);
+            return ResponseEntity.ok("Video subido exitosamente. URL: " + videoUrl);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
     }
 }
