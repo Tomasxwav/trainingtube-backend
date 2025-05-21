@@ -28,19 +28,19 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthentificationFilter jwtRequestFilter;
 
-    @Autowired
-    private JwtEntryPoint jwtEntryPoint;
+  /*   @Autowired
+    private JwtEntryPoint jwtEntryPoint; */
 
  /*    @Bean
     public JwtAuthentificationFilter jwtRequestFilter() {
         return new JwtAuthentificationFilter();
     }
  */
-/*     @Bean
+    @Bean
     public JwtEntryPoint jwtEntryPoint() {
         return new JwtEntryPoint();
     }
- */
+
 
 /* 
     @Bean
