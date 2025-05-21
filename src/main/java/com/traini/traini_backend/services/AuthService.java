@@ -26,11 +26,13 @@ public class AuthService {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
     }
 
-    public String authenticate(String username, String password){
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,password);
+    public String authenticate(String email, String password){
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
+
         Authentication authResult = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authResult);
-        return jwtUtil.generateToken(authResult);
+        String jwt = jwtUtil.generateToken(authResult);
+        return jwt;
     }
 
     public void registerUser(RegisterRequest registerDto){
