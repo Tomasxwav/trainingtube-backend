@@ -1,7 +1,8 @@
 package com.traini.traini_backend.config;
 
-import com.traini.traini_backend.security.EmployeeDetailsService;
 import com.traini.traini_backend.security.JwtUtil;
+import com.traini.traini_backend.services.EmployeeServiceImpl;
+
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class JwtAuthentificationFilter extends OncePerRequestFilter {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private EmployeeDetailsService userDetailsService;
+    private EmployeeServiceImpl userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
