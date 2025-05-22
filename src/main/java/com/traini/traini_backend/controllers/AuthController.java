@@ -6,6 +6,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import com.traini.traini_backend.dto.auth.LoginRequest;
+import com.traini.traini_backend.dto.auth.LoginResponse;
 import com.traini.traini_backend.dto.auth.RegisterRequest;
 import com.traini.traini_backend.services.AuthService;
 
@@ -23,13 +24,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginRequest loginUserDto, BindingResult bindingResult){
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginUserDto, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body("Revise sus credenciales");
         }
         try {
-            String jwt = authService.authenticate(loginUserDto.getEmail(), loginUserDto.getPassword());
-            return ResponseEntity.ok(jwt);
+            String accessToken = authService.authenticate(loginUserDto.getEmail(), loginUserDto.getPassword());
+
+            LoginResponse session = new LoginResponse(accessToken);
+            return ResponseEntity.ok(session);
         } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
