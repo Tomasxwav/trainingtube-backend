@@ -31,6 +31,21 @@ public class FirebaseStorageService {
             Storage.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
 
         return blob.getMediaLink();
+    }
+
+
+    public String uploadThumbnail(MultipartFile file) throws IOException {
+        String fileName = file.getOriginalFilename();
+
+        BlobId blobId = BlobId.of(bucketName, fileName);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
+                .setContentType(file.getContentType())
+                .build();
+
+        Blob blob = storage.create(blobInfo, file.getBytes(), 
+            Storage.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
+
+        return blob.getMediaLink();
 
 
     }

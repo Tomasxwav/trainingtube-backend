@@ -2,6 +2,8 @@ package com.traini.traini_backend.models;
 
 import java.util.Date;
 
+import com.traini.traini_backend.enums.Category;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,6 +26,10 @@ public class VideoModel {
 
     @Column(name = "upload_date")
     private Date uploadDate;
+
+    @Column(name = "category")
+    @Enumerated(EnumType.STRING)
+    private Category category;  
 
 
 
@@ -57,6 +63,21 @@ public class VideoModel {
 
     public void setUploadDate(Date uploadDate) {
         this.uploadDate = uploadDate;
+    }
+
+    public String getUrlThumbnail() {
+        return urlThumbnail;
+    }
+    public void setUrlThumbnail(String urlThumbnail) {
+        this.urlThumbnail = urlThumbnail;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
 
