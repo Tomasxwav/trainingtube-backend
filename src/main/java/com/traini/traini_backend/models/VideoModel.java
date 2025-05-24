@@ -22,7 +22,7 @@ public class VideoModel {
     private String videoUrl;  // URL de Firebase Storage para el video
 
     @Column(name = "url_thumbnail")
-    private String urlThumbnail;  // URL de Firebase Storage para el thumbnail
+    private String thumbnailUrl;  // URL de Firebase Storage para el thumbnail
 
     @Column(name = "upload_date")
     private Date uploadDate;
@@ -65,11 +65,11 @@ public class VideoModel {
         this.uploadDate = uploadDate;
     }
 
-    public String getUrlThumbnail() {
-        return urlThumbnail;
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
     }
-    public void setUrlThumbnail(String urlThumbnail) {
-        this.urlThumbnail = urlThumbnail;
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public Category getCategory() {

@@ -32,7 +32,7 @@ public class VideoServiceImpl implements VideoService {
         video.setDescription(description);
         video.setVideoUrl(videoUrl);
         video.setUploadDate(new Date());
-        video.setUrlThumbnail(thumbnailUrl);
+        video.setThumbnailUrl(thumbnailUrl);
         video.setCategory(category); 
 
         videoRepository.save(video);
