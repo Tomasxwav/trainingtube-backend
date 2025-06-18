@@ -17,25 +17,22 @@ import com.traini.traini_backend.security.JwtEntryPoint;
 @EnableWebSecurity
 public class SecurityConfig {
 
-
+    @Bean
+    public JwtAuthentificationFilter jwtTokenFilter(){
+        return new JwtAuthentificationFilter();
+    }
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/register", "/auth/login")
-                        .permitAll()
-                        .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint()))
-                .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/register", "/auth/login", "/auth/refresh")
+                    .permitAll()
+                    .anyRequest().authenticated())
+            .httpBasic(Customizer.withDefaults())
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint()))
+            .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
-    }
-    
-
-    @Bean
-    public JwtAuthentificationFilter jwtTokenFilter(){
-        return new JwtAuthentificationFilter();
     }
 
     @Bean
@@ -47,27 +44,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-/* 
-    @Bean
-    public EmployeeServiceImpl userDetailsService() {
-        return new EmployeeServiceImpl();
-    }
- */
-/*     @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(); 
-        authProvider.setUserDetailsService(userDetailsService());
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    } */
-
-/*     @Bean
-    CorsConfiguration corsConfiguration() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
-        configuration.setAllowCredentials(true);
-        return configuration;
-    } */
 }

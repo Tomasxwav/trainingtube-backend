@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.traini.traini_backend.dto.auth.LoginResponse;
 import com.traini.traini_backend.dto.auth.RegisterRequest;
 import com.traini.traini_backend.models.EmployeeModel;
 import com.traini.traini_backend.security.JwtUtil;
@@ -26,13 +27,14 @@ public class AuthService {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
     }
 
-    public String authenticate(String email, String password){
+    public LoginResponse authenticate(String email, String password){
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
 
         Authentication authResult = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authResult);
-        String jwt = jwtUtil.generateToken(authResult);
-        return jwt;
+        /* String jwt = jwtUtil.generateToken(authResult); */
+        LoginResponse session = new LoginResponse(jwtUtil.generateToken(authResult), jwtUtil.generateRefreshToken(authResult));
+        return session;
     }
 
     public void registerUser(RegisterRequest registerDto){
@@ -44,5 +46,23 @@ public class AuthService {
 
         EmployeeModel user = new EmployeeModel(registerDto.getName(),registerDto.getEmail(),passwordEncoder.encode(registerDto.getPassword()), registerDto.getRole()); 
         employeeService.save(user);
+    }
+
+    public String refreshAccessToken(String refreshToken) {
+    String username = jwtUtil.extractUsername(refreshToken);
+
+    System.out.println("Refreshing access token with: " + refreshToken);
+    System.out.println("Refreshing access token for user: " + username);
+
+    if (!jwtUtil.validateToken(refreshToken, employeeService.loadUserByUsername(username))) {
+        throw new IllegalArgumentException("Refresh token inválido o expirado");
+    }
+
+    // Importante: NO creamos un token con authorities si el original no los tenía.
+    // Esto fuerza que los refresh tokens no den acceso directo por sí solos.
+    var userDetails = employeeService.loadUserByUsername(username);
+    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+    return jwtUtil.generateToken(auth);
     }
 }

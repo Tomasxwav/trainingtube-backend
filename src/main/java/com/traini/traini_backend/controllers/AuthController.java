@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import com.traini.traini_backend.dto.auth.RefreshTokenRequest;
 import com.traini.traini_backend.dto.auth.LoginRequest;
 import com.traini.traini_backend.dto.auth.LoginResponse;
 import com.traini.traini_backend.dto.auth.RegisterRequest;
@@ -29,9 +30,8 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Revise sus credenciales");
         }
         try {
-            String accessToken = authService.authenticate(loginUserDto.getEmail(), loginUserDto.getPassword());
+            LoginResponse session = authService.authenticate(loginUserDto.getEmail(), loginUserDto.getPassword());
 
-            LoginResponse session = new LoginResponse(accessToken);
             return ResponseEntity.ok(session);
         } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -48,6 +48,20 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CREATED).body("Registrado");
         } catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        System.out.println("Refresh token recibido: " + refreshTokenRequest.getRefreshToken());
+
+        try {
+            String newAccessToken = authService.refreshAccessToken(refreshTokenRequest.getRefreshToken());
+
+            
+            return ResponseEntity.ok().body(new LoginResponse(newAccessToken, refreshTokenRequest.getRefreshToken()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido o expirado");
         }
     }
 
