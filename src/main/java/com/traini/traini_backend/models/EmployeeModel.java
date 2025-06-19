@@ -33,7 +33,7 @@ public class EmployeeModel {
     
     @Column(nullable = false)
     @NotEmpty
-    @Size(min = 6, max = 20)
+    @Size(min = 6)
     private String password;
     
     @Column(nullable = false)

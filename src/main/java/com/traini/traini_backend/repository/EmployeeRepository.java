@@ -6,4 +6,7 @@ import com.traini.traini_backend.models.EmployeeModel;
 
 public interface EmployeeRepository extends CrudRepository<EmployeeModel, Long> {
     Optional<EmployeeModel> findByName(String name);
+    Optional<EmployeeModel> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }
