@@ -2,6 +2,8 @@ package com.traini.traini_backend.models;
 
 import java.util.Date;
 
+import com.traini.traini_backend.enums.Category;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,10 +22,14 @@ public class VideoModel {
     private String videoUrl;  // URL de Firebase Storage para el video
 
     @Column(name = "url_thumbnail")
-    private String urlThumbnail;  // URL de Firebase Storage para el thumbnail
+    private String thumbnailUrl;  // URL de Firebase Storage para el thumbnail
 
     @Column(name = "upload_date")
     private Date uploadDate;
+
+    @Column(name = "category")
+    @Enumerated(EnumType.STRING)
+    private Category category;  
 
 
 
@@ -57,6 +63,21 @@ public class VideoModel {
 
     public void setUploadDate(Date uploadDate) {
         this.uploadDate = uploadDate;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
 

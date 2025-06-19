@@ -1,12 +1,11 @@
 package com.traini.traini_backend.controllers;
 
-import java.io.IOException;
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.traini.traini_backend.enums.Category;
 import com.traini.traini_backend.services.VideoServiceImpl;
 
 @RestController
@@ -17,12 +16,15 @@ public class VideoController {
 
     @PostMapping
     public ResponseEntity<String> uploadVideo(
-            @RequestParam("video") MultipartFile file,
+            @RequestParam("video") MultipartFile video,
+            @RequestParam("thumbnail") MultipartFile thumbnail,
             @RequestParam String title,
-            @RequestParam String description) {
+            @RequestParam String description,
+            @RequestParam Category category
+            ) {
         
         try {
-            String videoUrl = videoService.uploadAndSaveVideo(file, title, description);
+            String videoUrl = videoService.uploadAndSaveVideo(video, thumbnail, title, description, category);
             return ResponseEntity.ok("Video subido exitosamente. URL: " + videoUrl);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
