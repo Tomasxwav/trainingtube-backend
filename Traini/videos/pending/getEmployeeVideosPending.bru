@@ -1,0 +1,19 @@
+meta {
+  name: getEmployeeVideosPending
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{url}}/interactions/videos/:employeeId/pending
+  body: none
+  auth: bearer
+}
+
+params:path {
+  employeeId: 2
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b21hc0BwcnVlYmEuY29tIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9hZG1pbiJdLCJpYXQiOjE3NTAzNjMyNjEsImV4cCI6MTc1MDQ0OTY2MX0.7fCw5EphGeHATUdKAVH1KGkuv6FSVFiFslCp7Gh5kK58-g7tvAiT6O_HHESTMgRHMg2oO7jgw4VzBhniNBLC_w
+}

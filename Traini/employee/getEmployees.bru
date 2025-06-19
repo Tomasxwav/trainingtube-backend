@@ -1,0 +1,15 @@
+meta {
+  name: getEmployees
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{url}}/employees
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b21hc0BwcnVlYmEuY29tIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9hZG1pbiJdLCJpYXQiOjE3NTAzNTUwMzksImV4cCI6MTc1MDQ0MTQzOX0.BY6MiGGbw85tngTask-RNUS_iQ2zQEK0qSVanFSjYqpSyYVd1mBL-2Go4Iv5oGiorfn5xeZII_N2Bmi5l2FDtg
+}
