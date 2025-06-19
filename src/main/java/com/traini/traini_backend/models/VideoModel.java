@@ -31,6 +31,25 @@ public class VideoModel {
     @Enumerated(EnumType.STRING)
     private Department category;  
 
+    public VideoModel() {
+    }
+
+    public VideoModel(String title, String description, String videoUrl, String thumbnailUrl, Date uploadDate, Department category) {
+        this.title = title;
+        this.description = description;
+        this.videoUrl = videoUrl;
+        this.thumbnailUrl = thumbnailUrl;
+        this.uploadDate = uploadDate;
+        this.category = category;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
 
     public String getTitle() {
