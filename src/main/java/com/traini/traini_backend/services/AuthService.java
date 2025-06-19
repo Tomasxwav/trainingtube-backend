@@ -44,7 +44,7 @@ public class AuthService {
 
         System.out.println("Registering user: " + registerDto.getEmail());
 
-        EmployeeModel user = new EmployeeModel(registerDto.getName(),registerDto.getEmail(),passwordEncoder.encode(registerDto.getPassword()), registerDto.getRole()); 
+        EmployeeModel user = new EmployeeModel(registerDto.getName(),registerDto.getEmail(),passwordEncoder.encode(registerDto.getPassword()), registerDto.getRole(), registerDto.getDepartment()); 
         employeeService.save(user);
     }
 
