@@ -1,22 +1,29 @@
 package com.traini.traini_backend.dto.auth;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class LoginResponse {
-    private String access_token;
-    private String refresh_token;
+    @JsonProperty("access_token")
+    private String accessToken;
+
+    @JsonProperty("refresh_token")
+    private String refreshToken;
 
     public LoginResponse(String token, String refreshToken) {
-        this.access_token = token;
-        this.refresh_token = refreshToken;
+        this.accessToken = token;
+        this.refreshToken = refreshToken;
     }
 
-    
+    @JsonProperty("access_token")
     public String getAccessToken() {
-        return access_token;
+        return accessToken;
     }
     public void setToken(String token) {
-        this.access_token = token;
+        this.accessToken = token;
     }
 
-    public String getRefreshToken() { return refresh_token; }
-    public void setRefreshToken(String refreshToken) { this.refresh_token = refreshToken; }
+    @JsonProperty("refresh_token")
+    public String getRefreshToken() { return refreshToken; }
+    
+    public void setRefreshToken(String refreshToken) { this.refreshToken = refreshToken; }
 } 
