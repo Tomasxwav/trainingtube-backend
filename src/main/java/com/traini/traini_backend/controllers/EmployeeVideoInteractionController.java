@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.traini.traini_backend.models.EmployeeVideoInteractionModel;
+import com.traini.traini_backend.models.VideoModel;
 import com.traini.traini_backend.services.EmployeeVideoInteractionService;
 
 @RestController
@@ -25,7 +26,7 @@ public class EmployeeVideoInteractionController {
     }
 
     @GetMapping("/{employeeId}/pending")
-    public ResponseEntity<List<EmployeeVideoInteractionModel>> getPendingVideos(@PathVariable Long employeeId) {
+    public ResponseEntity<List<VideoModel>> getPendingVideos(@PathVariable Long employeeId) {
         return ResponseEntity.ok(service.getPendingVideosByEmployee(employeeId));
     }
 
