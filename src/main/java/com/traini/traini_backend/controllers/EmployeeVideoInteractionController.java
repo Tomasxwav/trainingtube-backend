@@ -13,7 +13,7 @@ import com.traini.traini_backend.models.EmployeeVideoInteractionModel;
 import com.traini.traini_backend.services.EmployeeVideoInteractionService;
 
 @RestController
-@RequestMapping("/interactions")
+@RequestMapping("/interactions/videos")
 public class EmployeeVideoInteractionController {
 
     
@@ -24,12 +24,12 @@ public class EmployeeVideoInteractionController {
         this.service = service;
     }
 
-    @GetMapping("/videos/{employeeId}/pending")
+    @GetMapping("/{employeeId}/pending")
     public ResponseEntity<List<EmployeeVideoInteractionModel>> getPendingVideos(@PathVariable Long employeeId) {
         return ResponseEntity.ok(service.getPendingVideosByEmployee(employeeId));
     }
 
-    @GetMapping("/videos/{employeeId}/favorites")
+    @GetMapping("/{employeeId}/favorites")
     public ResponseEntity<List<EmployeeVideoInteractionModel>> getFavoriteVideos(@PathVariable Long employeeId) {
         return ResponseEntity.ok(service.getFavoriteVideosByEmployee(employeeId));
     }
