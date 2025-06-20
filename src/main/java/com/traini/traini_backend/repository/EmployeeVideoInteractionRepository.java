@@ -28,6 +28,6 @@ public interface EmployeeVideoInteractionRepository
     List<EmployeeVideoInteractionModel> findByEmployeeIdAndIsFavorite(Long employeeId, boolean isFavorite);
 
     // Otra forma de obtener todos los videos PENDIENTES de un empleado 
-    @Query("SELECT v FROM VideoModel v WHERE v.category = :department AND EXISTS (SELECT 1 FROM EmployeeVideoInteractionModel i WHERE i.videoId = v.id AND i.employee.id = :employeeId AND i.pending = true)")
+    @Query("SELECT v FROM VideoModel v WHERE v.category = :department AND EXISTS (SELECT 1 FROM EmployeeVideoInteractionModel i WHERE i.videoId = v.id AND i.employee.id = :employeeId AND i.isPending = true)")
     List<VideoModel> findPendingVideosByEmployee(@Param("department") Department department, @Param("employeeId") Long employeeId);
 }
