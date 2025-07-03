@@ -2,6 +2,8 @@ package com.traini.traini_backend.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,13 +55,9 @@ public class AuthController {
 
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
-        System.out.println("Refresh token recibido: " + refreshTokenRequest.getRefreshToken());
-
         try {
-            String newAccessToken = authService.refreshAccessToken(refreshTokenRequest.getRefreshToken());
-
-            
-            return ResponseEntity.ok().body(new LoginResponse(newAccessToken, refreshTokenRequest.getRefreshToken()));
+            LoginResponse response = authService.refreshAccessTokenWithAuthorities(refreshTokenRequest.getRefreshToken());
+            return ResponseEntity.ok().body(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido o expirado");
         }
