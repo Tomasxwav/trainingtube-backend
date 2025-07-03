@@ -1,6 +1,7 @@
 package com.traini.traini_backend.models;
 
 
+import com.traini.traini_backend.enums.Department;
 import com.traini.traini_backend.enums.Role;
 
 import jakarta.persistence.Column;
@@ -39,17 +40,22 @@ public class EmployeeModel {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name = "department", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Department department;  
     
     // Getters, setters y constructores
 
     public EmployeeModel() {
     }
 
-    public EmployeeModel(String name, String email, String password, Role role) {
+    public EmployeeModel(String name, String email, String password, Role role, Department department) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.department = department;
     }
 
 
@@ -91,5 +97,13 @@ public class EmployeeModel {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 }

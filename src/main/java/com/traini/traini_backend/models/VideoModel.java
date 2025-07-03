@@ -2,7 +2,7 @@ package com.traini.traini_backend.models;
 
 import java.util.Date;
 
-import com.traini.traini_backend.enums.Category;
+import com.traini.traini_backend.enums.Department;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -29,8 +29,27 @@ public class VideoModel {
 
     @Column(name = "category")
     @Enumerated(EnumType.STRING)
-    private Category category;  
+    private Department category;  
 
+    public VideoModel() {
+    }
+
+    public VideoModel(String title, String description, String videoUrl, String thumbnailUrl, Date uploadDate, Department category) {
+        this.title = title;
+        this.description = description;
+        this.videoUrl = videoUrl;
+        this.thumbnailUrl = thumbnailUrl;
+        this.uploadDate = uploadDate;
+        this.category = category;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
 
     public String getTitle() {
@@ -72,11 +91,11 @@ public class VideoModel {
         this.thumbnailUrl = thumbnailUrl;
     }
 
-    public Category getCategory() {
+    public Department getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(Department category) {
         this.category = category;
     }
 

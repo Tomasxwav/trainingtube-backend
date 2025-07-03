@@ -1,5 +1,7 @@
 package com.traini.traini_backend.dto.auth;
 
+
+import com.traini.traini_backend.enums.Department;
 import com.traini.traini_backend.enums.Role;
 
 public class RegisterRequest {
@@ -7,6 +9,7 @@ public class RegisterRequest {
     private String email;
     private String password;
     private Role role;
+    private Department department;
 
     
     public String getName() {
@@ -39,5 +42,13 @@ public class RegisterRequest {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 }

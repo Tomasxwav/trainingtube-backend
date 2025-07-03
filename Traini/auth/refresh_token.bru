@@ -1,0 +1,11 @@
+meta {
+  name: refresh_token
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{url}}/auth/refresh-token
+  body: none
+  auth: inherit
+}

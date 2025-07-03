@@ -1,5 +1,8 @@
 package com.traini.traini_backend.services;
 
+
+
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +12,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.traini.traini_backend.models.EmployeeModel;
+import com.traini.traini_backend.models.EmployeeVideoInteractionModel;
+import com.traini.traini_backend.models.VideoModel;
 import com.traini.traini_backend.repository.EmployeeRepository;
+import com.traini.traini_backend.repository.EmployeeVideoInteractionRepository;
+import com.traini.traini_backend.repository.VideoRepository;
 import com.traini.traini_backend.services.interfaces.EmployeeService;
+import com.traini.traini_backend.enums.Department;
 
 @Service
 public class EmployeeServiceImpl implements UserDetailsService, EmployeeService {
@@ -18,6 +26,11 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    private VideoRepository videoRepository;
+
+    @Autowired
+    private EmployeeVideoInteractionRepository interactionRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -48,7 +61,9 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
 
     @Override
     public EmployeeModel save(EmployeeModel employee) {
-        return employeeRepository.save(employee);
+        EmployeeModel savedEmployee = employeeRepository.save(employee);
+        assignDepartmentVideosAsPending(savedEmployee);
+        return savedEmployee;
     }
 
     @Override
@@ -70,6 +85,20 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
         return employeeFound;
     }
 
-    
+    private void assignDepartmentVideosAsPending(EmployeeModel employee) {
+        Department videoCategory = employee.getDepartment();
+
+        List<VideoModel> departmentVideos = videoRepository.findByCategory(videoCategory);
+
+        departmentVideos.forEach(video -> {
+            EmployeeVideoInteractionModel interaction = new EmployeeVideoInteractionModel();
+            interaction.setEmployee(employee);
+            interaction.setVideoId(video.getId());
+            interaction.setPending(true); // Marcar como pendiente
+            interaction.setLastInteractionDate(new Date());
+
+            interactionRepository.save(interaction);
+        });
+    }
 
 }
