@@ -1,0 +1,21 @@
+meta {
+  name: register
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{url}}/auth/register
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Tomas Martinez",
+    "email": "tomas@prueba.com",
+    "password": "Prueba123",
+    "role": "admin",
+    "department": "sales"
+  }
+}

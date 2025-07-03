@@ -1,5 +1,5 @@
 package com.traini.traini_backend.enums;
 
-public enum Category {
+public enum Department {
     sales, marketing, development, support, design, management, other;
 }

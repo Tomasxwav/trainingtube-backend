@@ -1,0 +1,15 @@
+meta {
+  name: getVideoById
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{url}}/videos/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 
+}

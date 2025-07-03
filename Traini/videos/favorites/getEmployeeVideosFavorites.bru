@@ -1,0 +1,15 @@
+meta {
+  name: getEmployeeVideosFavorites
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{url}}/videos/:employeeId/favorites
+  body: none
+  auth: inherit
+}
+
+params:path {
+  employeeId: 
+}

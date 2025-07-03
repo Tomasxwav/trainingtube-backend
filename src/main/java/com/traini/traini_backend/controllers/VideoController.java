@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.traini.traini_backend.enums.Category;
+import com.traini.traini_backend.enums.Department;
 import com.traini.traini_backend.services.VideoServiceImpl;
 
 @RestController
@@ -20,7 +20,7 @@ public class VideoController {
             @RequestParam("thumbnail") MultipartFile thumbnail,
             @RequestParam String title,
             @RequestParam String description,
-            @RequestParam Category category
+            @RequestParam Department category
             ) {
         
         try {
