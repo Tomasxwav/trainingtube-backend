@@ -8,6 +8,6 @@ import com.traini.traini_backend.enums.Department;
 import com.traini.traini_backend.models.VideoModel;
 
 public interface VideoService {
-    String uploadAndSaveVideo(MultipartFile video, MultipartFile thumbnail , String title, String description, Department category) throws Exception; 
+    String uploadAndSaveVideo(MultipartFile video, MultipartFile thumbnail , String title, String description, Department department) throws Exception; 
     List<VideoModel> findAll();
 }

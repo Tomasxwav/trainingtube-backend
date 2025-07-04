@@ -38,7 +38,7 @@ public class SecurityConfig {
                 "/employees/**",
                 "/supervisors/**",
                 "/employees/**",
-                "/videos/admin/**",
+                "/admin/videos/**",
                 "/metrics/**"
                 ).hasRole("ADMIN")
                 
@@ -57,9 +57,9 @@ public class SecurityConfig {
                 
                 // Permisos generales (todos los roles autenticados)
                 .requestMatchers(
-                    "/favorites/**",
-                    "/likes/**",
-                    "/comments/**"
+                    "/interactions/favorites/**", 
+                    "/interactions/likes/**", 
+                    "/interactions/pending/**"
                 ).authenticated()
 
                 .anyRequest().authenticated())

@@ -20,11 +20,11 @@ public class VideoController {
             @RequestParam("thumbnail") MultipartFile thumbnail,
             @RequestParam String title,
             @RequestParam String description,
-            @RequestParam Department category
+            @RequestParam Department department
             ) {
         
         try {
-            String videoUrl = videoService.uploadAndSaveVideo(video, thumbnail, title, description, category);
+            String videoUrl = videoService.uploadAndSaveVideo(video, thumbnail, title, description, department);
             return ResponseEntity.ok("Video subido exitosamente. URL: " + videoUrl);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error: " + e.getMessage());

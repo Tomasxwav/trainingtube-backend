@@ -2,7 +2,6 @@ package com.traini.traini_backend.models;
 
 
 import com.traini.traini_backend.enums.Department;
-import com.traini.traini_backend.enums.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
