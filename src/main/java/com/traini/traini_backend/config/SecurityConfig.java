@@ -37,21 +37,20 @@ public class SecurityConfig {
                 .requestMatchers(
                 "/employees/**",
                 "/supervisors/**",
-                "/employees/**",
-                "/admin/videos/**",
+                "/videos/admin",
                 "/metrics/**"
                 ).hasRole("ADMIN")
                 
                 // Permisos para Supervisor
                 .requestMatchers(
-                    "/department/employees/**",
-                    "/department/videos/**",
-                    "/department/metrics/**"
+                    "/employees/department",
+                    "/videos/department",
+                    "/metrics/department"
                 ).hasRole("SUPERVISOR")
                 
                 // Permisos para Empleado
                 .requestMatchers(
-                    "/employees/videos/**",
+                    "/videos/department",
                     "/metrics/info/**"
                 ).hasRole("EMPLOYEE")
                 

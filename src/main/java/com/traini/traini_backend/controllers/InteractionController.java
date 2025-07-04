@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.traini.traini_backend.models.InteractionModel;
 import com.traini.traini_backend.models.VideoModel;
 import com.traini.traini_backend.services.InteractionService;
 import org.springframework.web.bind.annotation.PostMapping;

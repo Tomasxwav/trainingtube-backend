@@ -1,5 +1,6 @@
 package com.traini.traini_backend.controllers;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ public class VideoController {
     @Autowired
     private VideoServiceImpl videoService; 
 
-    @PostMapping
+    @PostMapping("/admin")
     public ResponseEntity<String> uploadVideo(
             @RequestParam("video") MultipartFile video,
             @RequestParam("thumbnail") MultipartFile thumbnail,
@@ -31,10 +32,19 @@ public class VideoController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/admin")
     public ResponseEntity<?> getAllVideos() {
         try {
             return ResponseEntity.ok(videoService.findAll());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/department")
+    public ResponseEntity<?> getDepartmentVideos(Authentication authentication) {
+        try {
+            return ResponseEntity.ok(videoService.findVideoByDepartment(authentication));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
         }

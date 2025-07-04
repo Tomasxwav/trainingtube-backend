@@ -3,6 +3,8 @@ package com.traini.traini_backend.services;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -74,5 +76,12 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public List<VideoModel> findAll() {
         return (List<VideoModel>) videoRepository.findAll();
+    }
+
+    public List<VideoModel> findVideoByDepartment(Authentication authentication) {
+        String email = authentication.getName();
+        Long employeeId = employeeRepository.findByEmail(email).get().getId();
+        Department department = employeeRepository.findDepartmentById(employeeId);
+        return videoRepository.findByDepartment(department);
     }
 }
