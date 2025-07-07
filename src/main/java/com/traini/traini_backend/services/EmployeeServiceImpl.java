@@ -12,10 +12,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.traini.traini_backend.models.EmployeeModel;
-import com.traini.traini_backend.models.EmployeeVideoInteractionModel;
+import com.traini.traini_backend.models.InteractionModel;
 import com.traini.traini_backend.models.VideoModel;
 import com.traini.traini_backend.repository.EmployeeRepository;
-import com.traini.traini_backend.repository.EmployeeVideoInteractionRepository;
+import com.traini.traini_backend.repository.InteractionRepository;
 import com.traini.traini_backend.repository.VideoRepository;
 import com.traini.traini_backend.services.interfaces.EmployeeService;
 import com.traini.traini_backend.enums.Department;
@@ -30,7 +30,7 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
     private VideoRepository videoRepository;
 
     @Autowired
-    private EmployeeVideoInteractionRepository interactionRepository;
+    private InteractionRepository interactionRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -86,12 +86,12 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
     }
 
     private void assignDepartmentVideosAsPending(EmployeeModel employee) {
-        Department videoCategory = employee.getDepartment();
+        Department videoDepartment = employee.getDepartment();
 
-        List<VideoModel> departmentVideos = videoRepository.findByCategory(videoCategory);
+        List<VideoModel> departmentVideos = videoRepository.findByDepartment(videoDepartment);
 
         departmentVideos.forEach(video -> {
-            EmployeeVideoInteractionModel interaction = new EmployeeVideoInteractionModel();
+            InteractionModel interaction = new InteractionModel();
             interaction.setEmployee(employee);
             interaction.setVideoId(video.getId());
             interaction.setPending(true); // Marcar como pendiente

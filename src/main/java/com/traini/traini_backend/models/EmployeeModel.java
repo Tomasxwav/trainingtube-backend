@@ -2,15 +2,17 @@ package com.traini.traini_backend.models;
 
 
 import com.traini.traini_backend.enums.Department;
-import com.traini.traini_backend.enums.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -37,10 +39,10 @@ public class EmployeeModel {
     @Size(min = 6)
     private String password;
     
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private RoleModel role;
+    
     @Column(name = "department", nullable = false)
     @Enumerated(EnumType.STRING)
     private Department department;  
@@ -50,7 +52,7 @@ public class EmployeeModel {
     public EmployeeModel() {
     }
 
-    public EmployeeModel(String name, String email, String password, Role role, Department department) {
+    public EmployeeModel(String name, String email, String password, RoleModel role, Department department) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -91,11 +93,11 @@ public class EmployeeModel {
         this.password = password;
     }
 
-    public Role getRole() {
+    public RoleModel getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(RoleModel role) {
         this.role = role;
     }
 

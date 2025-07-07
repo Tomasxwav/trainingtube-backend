@@ -26,9 +26,42 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/register", "/auth/login", "/auth/refresh-token")
-                    .permitAll()
-                    .anyRequest().authenticated())
+            .authorizeHttpRequests(auth -> auth
+            .requestMatchers(
+                "/auth/register", 
+                "/auth/login", 
+                "/auth/refresh-token")
+                .permitAll()
+
+                // Permisos para Administrador
+                .requestMatchers(
+                "/employees/**",
+                "/supervisors/**",
+                "/videos/admin",
+                "/metrics/**"
+                ).hasRole("ADMIN")
+                
+                // Permisos para Supervisor
+                .requestMatchers(
+                    "/employees/department",
+                    "/videos/department",
+                    "/metrics/department"
+                ).hasRole("SUPERVISOR")
+                
+                // Permisos para Empleado
+                .requestMatchers(
+                    "/videos/department",
+                    "/metrics/info/**"
+                ).hasRole("EMPLOYEE")
+                
+                // Permisos generales (todos los roles autenticados)
+                .requestMatchers(
+                    "/interactions/favorites/**", 
+                    "/interactions/likes/**", 
+                    "/interactions/pending/**"
+                ).authenticated()
+
+                .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
             .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint()))
             .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

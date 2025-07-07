@@ -27,20 +27,20 @@ public class VideoModel {
     @Column(name = "upload_date")
     private Date uploadDate;
 
-    @Column(name = "category")
+    @Column(name = "department")
     @Enumerated(EnumType.STRING)
-    private Department category;  
+    private Department department;  
 
     public VideoModel() {
     }
 
-    public VideoModel(String title, String description, String videoUrl, String thumbnailUrl, Date uploadDate, Department category) {
+    public VideoModel(String title, String description, String videoUrl, String thumbnailUrl, Date uploadDate, Department department) {
         this.title = title;
         this.description = description;
         this.videoUrl = videoUrl;
         this.thumbnailUrl = thumbnailUrl;
         this.uploadDate = uploadDate;
-        this.category = category;
+        this.department = department;
     }
 
     public Long getId() {
@@ -91,12 +91,12 @@ public class VideoModel {
         this.thumbnailUrl = thumbnailUrl;
     }
 
-    public Department getCategory() {
-        return category;
+    public Department getDepartment() {
+        return department;
     }
 
-    public void setCategory(Department category) {
-        this.category = category;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
 

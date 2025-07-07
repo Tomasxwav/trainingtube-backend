@@ -8,5 +8,5 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 public interface VideoRepository extends CrudRepository<VideoModel, Long> {
-    List<VideoModel> findByCategory(Department category);
+    List<VideoModel> findByDepartment(Department department);
 }

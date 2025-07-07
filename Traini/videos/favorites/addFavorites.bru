@@ -5,11 +5,11 @@ meta {
 }
 
 post {
-  url: {{url}}/videos/:employeeId/favorites
+  url: {{url}}/interactions/favorites/4
   body: none
-  auth: inherit
+  auth: bearer
 }
 
-params:path {
-  employeeId: 
+auth:bearer {
+  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmZXJAcHJ1ZWJhLmNvbSIsImF1dGhvcml0aWVzIjpbIkNPTU1FTlQiLCJGQVZPUklURVMiLCJMSUtFIiwiUk9MRV9FTVBMT1lFRSIsIlZJRVdfTVlfSU5URVJBQ1RJT05TIiwiVklFV19NWV9NRVRSSUNTIiwiVklFV19WSURFT1NfREVQQVJUTUVOVCJdLCJpYXQiOjE3NTE2NDk1NTMsImV4cCI6MTc1MTczNTk1M30.F4l-lplgFtull__m4Sd28U-Ej02FO-nclo4eaTxV6A1271Q4cCBlkBIFnwGZ8Pj80a_EjGdrcH06rJuxgL3Wtw
 }

@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "employee_video_interactions")
-public class EmployeeVideoInteractionModel {
+public class InteractionModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,10 +43,10 @@ public class EmployeeVideoInteractionModel {
     private Date lastInteractionDate;
 
     // Getters, Setters, Constructors...
-    public EmployeeVideoInteractionModel() {
+    public InteractionModel() {
     }
     
-    public EmployeeVideoInteractionModel(EmployeeModel employee, Long videoId, boolean isFavorite, boolean isPending, boolean isWatched, Date lastInteractionDate) {
+    public InteractionModel(EmployeeModel employee, Long videoId, boolean isFavorite, boolean isPending, boolean isWatched, Date lastInteractionDate) {
         this.employee = employee;
         this.videoId = videoId;
         this.isFavorite = isFavorite;
