@@ -1,5 +1,7 @@
 package com.traini.traini_backend.dto.auth;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class LoginResponse {
@@ -9,9 +11,13 @@ public class LoginResponse {
     @JsonProperty("refresh_token")
     private String refreshToken;
 
-    public LoginResponse(String token, String refreshToken) {
+    @JsonProperty("authorities")
+    private List<String> authorities;
+
+    public LoginResponse(String token, String refreshToken, List<String> authorities) {
         this.accessToken = token;
         this.refreshToken = refreshToken;
+        this.authorities = authorities;
     }
 
     @JsonProperty("access_token")
@@ -26,4 +32,9 @@ public class LoginResponse {
     public String getRefreshToken() { return refreshToken; }
     
     public void setRefreshToken(String refreshToken) { this.refreshToken = refreshToken; }
+
+    @JsonProperty("authorities")
+    public List<String> getAuthorities() { return authorities; }
+
+    public void setAuthorities(List<String> authorities) { this.authorities = authorities; }
 } 
