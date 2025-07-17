@@ -104,4 +104,11 @@ public class InteractionService {
         interaction.setWatched(!interaction.isWatched());
         return repository.save(interaction);
     }
+
+    // Obtener interacciones de un empleado
+    public List<InteractionModel> getInteractionsByEmployee(Authentication authentication) {
+        String email = authentication.getName();
+        Long employeeId = employeeRepository.findByEmail(email).get().getId();
+        return repository.findByEmployeeId(employeeId);
+    }
 }

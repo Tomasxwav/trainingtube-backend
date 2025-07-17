@@ -27,6 +27,11 @@ public class InteractionController {
         this.service = service;
     }
 
+    @GetMapping() // Endpoint to get all interactions
+    public ResponseEntity<?> getAllInteractions(Authentication authentication) {
+        return ResponseEntity.ok(service.getInteractionsByEmployee(authentication));
+    }
+
     @GetMapping("/pending")
     public ResponseEntity<List<VideoModel>> getPendingVideos(Authentication authentication) {
         return ResponseEntity.ok(service.getPendingVideos(authentication));
