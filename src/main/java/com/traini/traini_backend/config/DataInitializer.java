@@ -25,28 +25,28 @@ public class DataInitializer {
             // Verificar y crear privilegios solo si no existen
             
             // ADMIN PRIVILEGES
-            PrivilegeModel adminVideos = createPrivilegeIfNotFound("ADMIN_VIDEOS", privilegeRepository);
-            PrivilegeModel adminDepartamentos = createPrivilegeIfNotFound("ADMIN_DEPARTMENTS", privilegeRepository);
-            PrivilegeModel adminEmpleados = createPrivilegeIfNotFound("ADMIN_EMPLOYEES", privilegeRepository);
-            PrivilegeModel viewAllMetrics = createPrivilegeIfNotFound("VIEW_ALL_METRICS", privilegeRepository);
+            PrivilegeModel adminVideos = createPrivilegeIfNotFound("canAdminVideos", privilegeRepository);
+            PrivilegeModel adminDepartments = createPrivilegeIfNotFound("canAdminDepartments", privilegeRepository);
+            PrivilegeModel adminEmployees = createPrivilegeIfNotFound("canAdminEmployees", privilegeRepository);
+            PrivilegeModel viewAllMetrics = createPrivilegeIfNotFound("canViewAllMetrics", privilegeRepository);
 
             // SUPERVISOR PRIVILEGES
-            PrivilegeModel adminDepartmentVideos = createPrivilegeIfNotFound("ADMIN_DEPARTMENT_VIDEOS", privilegeRepository);
-            PrivilegeModel adminDepartmentEmployees = createPrivilegeIfNotFound("ADMIN_DEPARTMENT_EMPLOYEES", privilegeRepository);
-            PrivilegeModel viewDepartmentMetrics = createPrivilegeIfNotFound("VIEW_DEPARTMENT_METRICS", privilegeRepository);
+            PrivilegeModel adminDepartmentVideos = createPrivilegeIfNotFound("canAdminDepartmentVideos", privilegeRepository);
+            PrivilegeModel adminDepartmentEmployees = createPrivilegeIfNotFound("canAdminDepartmentEmployees", privilegeRepository);
+            PrivilegeModel viewDepartmentMetrics = createPrivilegeIfNotFound("canViewDepartmentMetrics", privilegeRepository);
 
             // EMPLOYEE PRIVILEGES
-            PrivilegeModel viewVideosDepartment = createPrivilegeIfNotFound("VIEW_VIDEOS_DEPARTMENT", privilegeRepository);
-            PrivilegeModel viewMyMetrics = createPrivilegeIfNotFound("VIEW_MY_METRICS", privilegeRepository);
-            PrivilegeModel viewMyInteractions = createPrivilegeIfNotFound("VIEW_MY_INTERACTIONS", privilegeRepository);
-            PrivilegeModel comment = createPrivilegeIfNotFound("COMMENT", privilegeRepository);
-            PrivilegeModel like = createPrivilegeIfNotFound("LIKE", privilegeRepository);
-            PrivilegeModel favorites = createPrivilegeIfNotFound("FAVORITES", privilegeRepository);
+            PrivilegeModel viewVideosDepartment = createPrivilegeIfNotFound("canViewVideosDepartment", privilegeRepository);
+            PrivilegeModel viewMyMetrics = createPrivilegeIfNotFound("canViewMyMetrics", privilegeRepository);
+            PrivilegeModel viewMyInteractions = createPrivilegeIfNotFound("canViewMyInteractions", privilegeRepository);
+            PrivilegeModel comment = createPrivilegeIfNotFound("canComment", privilegeRepository);
+            PrivilegeModel like = createPrivilegeIfNotFound("canLike", privilegeRepository);
+            PrivilegeModel favorites = createPrivilegeIfNotFound("canFavorites", privilegeRepository);
 
             // Verificar y crear roles solo si no existen
             createRoleIfNotFound(
                 Role.ADMIN,
-                Set.of(adminVideos, adminDepartamentos, adminEmpleados, 
+                Set.of(adminVideos, adminDepartments, adminEmployees, 
                     viewAllMetrics, viewMyMetrics, viewMyInteractions,
                     comment, like, favorites),
                 roleRepository
