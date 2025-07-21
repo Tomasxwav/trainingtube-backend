@@ -1,7 +1,5 @@
 package com.traini.traini_backend.services;
 
-
-
 import java.util.Date;
 import java.util.List;
 
@@ -14,11 +12,11 @@ import org.springframework.stereotype.Service;
 import com.traini.traini_backend.models.EmployeeModel;
 import com.traini.traini_backend.models.InteractionModel;
 import com.traini.traini_backend.models.VideoModel;
+import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.repository.EmployeeRepository;
 import com.traini.traini_backend.repository.InteractionRepository;
 import com.traini.traini_backend.repository.VideoRepository;
 import com.traini.traini_backend.services.interfaces.EmployeeService;
-import com.traini.traini_backend.enums.Department;
 
 @Service
 public class EmployeeServiceImpl implements UserDetailsService, EmployeeService {
@@ -86,9 +84,9 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
     }
 
     private void assignDepartmentVideosAsPending(EmployeeModel employee) {
-        Department videoDepartment = employee.getDepartment();
+        DepartmentModel employeeDepartment = employee.getDepartment();
 
-        List<VideoModel> departmentVideos = videoRepository.findByDepartment(videoDepartment);
+        List<VideoModel> departmentVideos = videoRepository.findByDepartment(employeeDepartment);
 
         departmentVideos.forEach(video -> {
             InteractionModel interaction = new InteractionModel();

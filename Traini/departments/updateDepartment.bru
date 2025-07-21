@@ -1,0 +1,24 @@
+meta {
+  name: Update Department
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{url}}/departments/1
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ACCESS_TOKEN}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Sales & Marketing",
+    "description": "Departamento de Ventas y Marketing",
+    "active": true
+  }
+}

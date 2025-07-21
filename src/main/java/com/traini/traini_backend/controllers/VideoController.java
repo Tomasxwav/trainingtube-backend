@@ -6,14 +6,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.traini.traini_backend.enums.Department;
+import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.services.VideoServiceImpl;
+import com.traini.traini_backend.services.interfaces.DepartmentService;
 
 @RestController
 @RequestMapping("/videos")
 public class VideoController {
     @Autowired
     private VideoServiceImpl videoService; 
+    
+    @Autowired
+    private DepartmentService departmentService;
 
     @PostMapping("/admin")
     public ResponseEntity<String> uploadVideo(
@@ -21,10 +25,11 @@ public class VideoController {
             @RequestParam("thumbnail") MultipartFile thumbnail,
             @RequestParam String title,
             @RequestParam String description,
-            @RequestParam Department department
+            @RequestParam Long department_id
             ) {
         
         try {
+            DepartmentModel department = departmentService.findById(department_id);
             String videoUrl = videoService.uploadAndSaveVideo(video, thumbnail, title, description, department);
             return ResponseEntity.ok("Video subido exitosamente. URL: " + videoUrl);
         } catch (Exception e) {

@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.traini.traini_backend.enums.Department;
+import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.models.EmployeeModel;
 import com.traini.traini_backend.models.InteractionModel;
 import com.traini.traini_backend.models.VideoModel;
@@ -35,8 +35,8 @@ public class VideoServiceImpl implements VideoService {
   
 
     @Override
-    public String uploadAndSaveVideo(MultipartFile vildeo,MultipartFile thumbnail, String title, String description, Department department) throws Exception {
-        String videoUrl = firebaseStorageService.uploadVideo(vildeo);
+    public String uploadAndSaveVideo(MultipartFile video, MultipartFile thumbnail, String title, String description, DepartmentModel department) throws Exception {
+        String videoUrl = firebaseStorageService.uploadVideo(video);
         String thumbnailUrl = firebaseStorageService.uploadThumbnail(thumbnail);
 
         // 2. Guardar metadatos en la base de datos
@@ -81,7 +81,7 @@ public class VideoServiceImpl implements VideoService {
     public List<VideoModel> findVideoByDepartment(Authentication authentication) {
         String email = authentication.getName();
         Long employeeId = employeeRepository.findByEmail(email).get().getId();
-        Department department = employeeRepository.findDepartmentById(employeeId);
+        DepartmentModel department = employeeRepository.findDepartmentById(employeeId);
         return videoRepository.findByDepartment(department);
     }
 }

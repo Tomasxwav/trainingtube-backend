@@ -3,15 +3,13 @@ package com.traini.traini_backend.services;
 import java.util.Date;
 import java.util.List;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
 
-
-import com.traini.traini_backend.enums.Department;
 import com.traini.traini_backend.models.InteractionModel;
 import com.traini.traini_backend.models.VideoModel;
+import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.repository.EmployeeRepository;
 import com.traini.traini_backend.repository.InteractionRepository;
 
@@ -51,8 +49,8 @@ public class InteractionService {
         String email = authentication.getName();
         Long employeeId = employeeRepository.findByEmail(email).get().getId();
 
-        Department department = employeeRepository.findDepartmentById(employeeId);
-        return repository.findPendingVideosByEmployee(department, employeeId);
+        DepartmentModel department = employeeRepository.findDepartmentById(employeeId);
+        return repository.findPendingVideosByEmployee(department.getId(), employeeId);
     }
 
     // Obtener videos favoritos del empleado actual

@@ -1,0 +1,24 @@
+meta {
+  name: Create Department
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{url}}/departments
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ACCESS_TOKEN}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Human Resources",
+    "description": "Departamento de Recursos Humanos",
+    "active": true
+  }
+}
