@@ -1,12 +1,7 @@
 package com.traini.traini_backend.models;
 
-
-import com.traini.traini_backend.enums.Department;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,16 +38,16 @@ public class EmployeeModel {
     @JoinColumn(name = "role_id")
     private RoleModel role;
     
-    @Column(name = "department", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Department department;  
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "department_id", nullable = false)
+    private DepartmentModel department;  
     
     // Getters, setters y constructores
 
     public EmployeeModel() {
     }
 
-    public EmployeeModel(String name, String email, String password, RoleModel role, Department department) {
+    public EmployeeModel(String name, String email, String password, RoleModel role, DepartmentModel department) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -101,11 +96,11 @@ public class EmployeeModel {
         this.role = role;
     }
 
-    public Department getDepartment() {
+    public DepartmentModel getDepartment() {
         return department;
     }
 
-    public void setDepartment(Department department) {
+    public void setDepartment(DepartmentModel department) {
         this.department = department;
     }
 }

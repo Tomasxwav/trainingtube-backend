@@ -2,8 +2,6 @@ package com.traini.traini_backend.models;
 
 import java.util.Date;
 
-import com.traini.traini_backend.enums.Department;
-
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -27,14 +25,14 @@ public class VideoModel {
     @Column(name = "upload_date")
     private Date uploadDate;
 
-    @Column(name = "department")
-    @Enumerated(EnumType.STRING)
-    private Department department;  
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "department_id", nullable = false)
+    private DepartmentModel department;  
 
     public VideoModel() {
     }
 
-    public VideoModel(String title, String description, String videoUrl, String thumbnailUrl, Date uploadDate, Department department) {
+    public VideoModel(String title, String description, String videoUrl, String thumbnailUrl, Date uploadDate, DepartmentModel department) {
         this.title = title;
         this.description = description;
         this.videoUrl = videoUrl;
@@ -91,11 +89,11 @@ public class VideoModel {
         this.thumbnailUrl = thumbnailUrl;
     }
 
-    public Department getDepartment() {
+    public DepartmentModel getDepartment() {
         return department;
     }
 
-    public void setDepartment(Department department) {
+    public void setDepartment(DepartmentModel department) {
         this.department = department;
     }
 

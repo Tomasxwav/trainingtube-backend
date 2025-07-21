@@ -9,8 +9,10 @@ import org.springframework.context.annotation.Configuration;
 import com.traini.traini_backend.enums.Role;
 import com.traini.traini_backend.models.PrivilegeModel;
 import com.traini.traini_backend.models.RoleModel;
+import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.repository.PrivilegeRepository;
 import com.traini.traini_backend.repository.RoleRepository;
+import com.traini.traini_backend.repository.DepartmentRepository;
 
 
 @Configuration
@@ -19,9 +21,13 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initRolesAndPrivileges(
         PrivilegeRepository privilegeRepository,
-        RoleRepository roleRepository
+        RoleRepository roleRepository,
+        DepartmentRepository departmentRepository
     ) {
         return _ -> {
+            // Inicializar departamentos primero
+            initializeDepartments(departmentRepository);
+            
             // Verificar y crear privilegios solo si no existen
             
             // ADMIN PRIVILEGES
@@ -83,6 +89,24 @@ public class DataInitializer {
         if (role == null) {
             role = new RoleModel(roleName, privileges);
             roleRepository.save(role);
+        }
+    }
+    
+    private void initializeDepartments(DepartmentRepository departmentRepository) {
+        // Crear departamentos básicos si no existen
+        createDepartmentIfNotFound("Ventas", "Departamento de Ventas", departmentRepository);
+        createDepartmentIfNotFound("Marketing", "Departamento de Marketing", departmentRepository);
+        createDepartmentIfNotFound("Desarrollo", "Departamento de Desarrollo", departmentRepository);
+        createDepartmentIfNotFound("Soporte", "Departamento de Soporte", departmentRepository);
+        createDepartmentIfNotFound("Diseño", "Departamento de Diseño", departmentRepository);
+        createDepartmentIfNotFound("Gestión", "Departamento de Gestión", departmentRepository);
+        createDepartmentIfNotFound("Otros", "Otros departamentos", departmentRepository);
+    }
+    
+    private void createDepartmentIfNotFound(String name, String description, DepartmentRepository departmentRepository) {
+        if (!departmentRepository.existsByName(name)) {
+            DepartmentModel department = new DepartmentModel(name, description);
+            departmentRepository.save(department);
         }
     }
 }

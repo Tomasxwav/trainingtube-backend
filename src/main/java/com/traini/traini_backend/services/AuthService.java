@@ -15,20 +15,24 @@ import com.traini.traini_backend.dto.auth.LoginResponse;
 import com.traini.traini_backend.dto.auth.RegisterRequest;
 import com.traini.traini_backend.models.EmployeeModel;
 import com.traini.traini_backend.models.RoleModel;
+import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.repository.RoleRepository;
+import com.traini.traini_backend.services.interfaces.DepartmentService;
 import com.traini.traini_backend.security.JwtUtil;
 
 @Service
 public class AuthService {
 
     private final EmployeeServiceImpl employeeService;
+    private final DepartmentService departmentService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RoleRepository roleRepository;
 
-    public AuthService(EmployeeServiceImpl employeeService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, AuthenticationManagerBuilder authenticationManagerBuilder, RoleRepository roleRepository) {
+    public AuthService(EmployeeServiceImpl employeeService, DepartmentService departmentService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, AuthenticationManagerBuilder authenticationManagerBuilder, RoleRepository roleRepository) {
         this.employeeService = employeeService;
+        this.departmentService = departmentService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
@@ -58,12 +62,19 @@ public class AuthService {
         RoleModel roleModel = roleRepository.findByName(registerDto.getRole())
             .orElseThrow(() -> new IllegalArgumentException("Rol no encontrado"));
 
+        DepartmentModel departmentModel;
+        try {
+            departmentModel = departmentService.findById(registerDto.getDepartmentId());
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException("Departamento no encontrado con ID: " + registerDto.getDepartmentId());
+        }
+
         EmployeeModel user = new EmployeeModel(
             registerDto.getName(),
             registerDto.getEmail(),
             passwordEncoder.encode(registerDto.getPassword()),
             roleModel,
-            registerDto.getDepartment()
+            departmentModel
         );
 
         employeeService.save(user);

@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.traini.traini_backend.enums.Department;
 import com.traini.traini_backend.models.InteractionModel;
 import com.traini.traini_backend.models.VideoModel;
 
@@ -28,8 +27,8 @@ public interface InteractionRepository
     List<InteractionModel> findByEmployeeIdAndIsFavorite(Long employeeId, boolean isFavorite);
 
     // Otra forma de obtener todos los videos PENDIENTES de un empleado 
-    @Query("SELECT v FROM VideoModel v WHERE v.department = :department AND EXISTS (SELECT 1 FROM InteractionModel i WHERE i.videoId = v.id AND i.employee.id = :employeeId AND i.isPending = true)")
-    List<VideoModel> findPendingVideosByEmployee(@Param("department") Department department, @Param("employeeId") Long employeeId);
+    @Query("SELECT v FROM VideoModel v WHERE v.department.id = :departmentId AND EXISTS (SELECT 1 FROM InteractionModel i WHERE i.videoId = v.id AND i.employee.id = :employeeId AND i.isPending = true)")
+    List<VideoModel> findPendingVideosByEmployee(@Param("departmentId") Long departmentId, @Param("employeeId") Long employeeId);
 
     @Query("SELECT v FROM VideoModel v WHERE EXISTS (SELECT 1 FROM InteractionModel i WHERE i.videoId = v.id AND i.employee.id = :employeeId AND i.isFavorite = true)")
     List<VideoModel> findFavoritesVideosByEmployee(@Param("employeeId") Long employeeId);
