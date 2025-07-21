@@ -1,0 +1,15 @@
+meta {
+  name: Get All Departments
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{url}}/departments
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ACCESS_TOKEN}}
+}

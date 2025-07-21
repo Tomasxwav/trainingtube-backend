@@ -1,15 +1,17 @@
 package com.traini.traini_backend.dto.auth;
 
-
-import com.traini.traini_backend.enums.Department;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.traini.traini_backend.enums.Role;
 
 public class RegisterRequest {
+
+
     private String name;
     private String email;
     private String password;
     private Role role;
-    private Department department;
+    @JsonProperty("department_id")
+    private Long departmentId;
 
     
     public String getName() {
@@ -44,11 +46,11 @@ public class RegisterRequest {
         this.role = role;
     }
 
-    public Department getDepartment() {
-        return department;
+    public Long getDepartmentId() {
+        return departmentId;
     }
 
-    public void setDepartment(Department department) {
-        this.department = department;
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
     }
 }

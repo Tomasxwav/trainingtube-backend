@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.traini.traini_backend.enums.Department;
+import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.models.VideoModel;
 
 public interface VideoService {
-    String uploadAndSaveVideo(MultipartFile video, MultipartFile thumbnail , String title, String description, Department department) throws Exception; 
+    String uploadAndSaveVideo(MultipartFile video, MultipartFile thumbnail , String title, String description, DepartmentModel department) throws Exception; 
     List<VideoModel> findAll();
 }
