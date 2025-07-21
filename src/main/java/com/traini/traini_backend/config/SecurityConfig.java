@@ -24,7 +24,8 @@ public class SecurityConfig {
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(Customizer.withDefaults())
+        http
+            // .cors(Customizer.withDefaults()) // Deshabilitado - usando CorsConfig en su lugar
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
             .requestMatchers(

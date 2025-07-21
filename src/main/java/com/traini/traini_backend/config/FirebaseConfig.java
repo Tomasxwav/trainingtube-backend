@@ -8,24 +8,33 @@ import com.google.firebase.FirebaseOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.annotation.PostConstruct;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${firebase.storage.bucket-name}") //  application.properties
+    @Value("${firebase.storage.bucket-name}")
     private String bucketName;
+
+    @Value("${firebase.service-account-json}") 
+    private String firebaseCredentials;
 
     @PostConstruct
     public void initialize() throws IOException {
 
-        ClassPathResource serviceAccount = new ClassPathResource("serviceAccountKey.json");
+        if (firebaseCredentials == null || firebaseCredentials.length() < 100) {
+            throw new IllegalArgumentException("FIREBASE_CREDENTIALS está vacío o malformado.");
+        }
+
+        ByteArrayInputStream serviceAccount = new ByteArrayInputStream(firebaseCredentials.getBytes(StandardCharsets.UTF_8));
 
         FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream()))
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .setStorageBucket(bucketName)
                 .build();
 
@@ -36,9 +45,9 @@ public class FirebaseConfig {
 
     @Bean
     public Storage storage() throws IOException {
-        ClassPathResource serviceAccount = new ClassPathResource("serviceAccountKey.json");
+        ByteArrayInputStream serviceAccount = new ByteArrayInputStream(firebaseCredentials.getBytes(StandardCharsets.UTF_8));
         return StorageOptions.newBuilder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream()))
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build()
                 .getService();
     }
