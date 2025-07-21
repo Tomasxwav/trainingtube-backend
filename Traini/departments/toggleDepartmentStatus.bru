@@ -1,0 +1,15 @@
+meta {
+  name: Toggle Department Status
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{url}}/departments/1/toggle-status
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ACCESS_TOKEN}}
+}
