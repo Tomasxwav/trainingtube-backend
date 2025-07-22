@@ -35,8 +35,8 @@ public class VideoServiceImpl implements VideoService {
   
 
     @Override
-    public String uploadAndSaveVideo(MultipartFile video, MultipartFile thumbnail, String title, String description, DepartmentModel department) throws Exception {
-        String videoUrl = firebaseStorageService.uploadVideo(video);
+    public String uploadAndSaveVideo(MultipartFile videoFile, MultipartFile thumbnail, String title, String description, DepartmentModel department) throws Exception {
+        String videoUrl = firebaseStorageService.uploadVideo(videoFile);
         String thumbnailUrl = firebaseStorageService.uploadThumbnail(thumbnail);
 
         // 2. Guardar metadatos en la base de datos
