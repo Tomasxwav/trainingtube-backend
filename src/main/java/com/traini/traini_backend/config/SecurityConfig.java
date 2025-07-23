@@ -29,7 +29,6 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
             .requestMatchers(
-                "/auth/register", 
                 "/auth/login", 
                 "/auth/refresh-token")
                 .permitAll()
@@ -42,23 +41,29 @@ public class SecurityConfig {
                 "/metrics/**"
                 ).hasRole("ADMIN")
                 
-                // Permisos para Supervisor y Empleado
-                .requestMatchers(
-                    "/videos/department",
-                    "/metrics/info/**"
-                ).hasAnyRole("SUPERVISOR", "EMPLOYEE")
-                
                 // Permisos solo para Supervisor
                 .requestMatchers(
-                    "/employees/department",
-                    "/metrics/department"
+                "/employees/department",
+                "/metrics/department"
                 ).hasRole("SUPERVISOR")
                 
+                // Permisos para Supervisor y Empleado
+                .requestMatchers(
+                "/metrics/info/**"
+                ).hasAnyRole("SUPERVISOR", "EMPLOYEE")
+
+                // Permisos para Supervisor y Administrador
+                .requestMatchers(
+                "/auth/register"
+                ).hasAnyRole("ADMIN", "SUPERVISOR")
+
                 // Permisos generales (todos los roles autenticados)
                 .requestMatchers(
-                    "/interactions/favorites/**", 
-                    "/interactions/likes/**", 
-                    "/interactions/pending/**"
+                "/interactions/favorites/**", 
+                "/interactions/likes/**", 
+                "/videos/department",
+                "/interactions/pending/**"
+                
                 ).authenticated()
 
                 .anyRequest().authenticated())
