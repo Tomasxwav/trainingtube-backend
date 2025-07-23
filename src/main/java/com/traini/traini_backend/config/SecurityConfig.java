@@ -42,18 +42,17 @@ public class SecurityConfig {
                 "/metrics/**"
                 ).hasRole("ADMIN")
                 
-                // Permisos para Supervisor
-                .requestMatchers(
-                    "/employees/department",
-                    "/videos/department",
-                    "/metrics/department"
-                ).hasRole("SUPERVISOR")
-                
-                // Permisos para Empleado
+                // Permisos para Supervisor y Empleado
                 .requestMatchers(
                     "/videos/department",
                     "/metrics/info/**"
-                ).hasRole("EMPLOYEE")
+                ).hasAnyRole("SUPERVISOR", "EMPLOYEE")
+                
+                // Permisos solo para Supervisor
+                .requestMatchers(
+                    "/employees/department",
+                    "/metrics/department"
+                ).hasRole("SUPERVISOR")
                 
                 // Permisos generales (todos los roles autenticados)
                 .requestMatchers(
