@@ -1,28 +1,37 @@
 package com.traini.traini_backend.config;
 
+import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.traini.traini_backend.enums.Role;
 import com.traini.traini_backend.models.PrivilegeModel;
 import com.traini.traini_backend.models.RoleModel;
 import com.traini.traini_backend.models.DepartmentModel;
+import com.traini.traini_backend.models.EmployeeModel;
 import com.traini.traini_backend.repository.PrivilegeRepository;
 import com.traini.traini_backend.repository.RoleRepository;
 import com.traini.traini_backend.repository.DepartmentRepository;
+import com.traini.traini_backend.repository.EmployeeRepository;
 
 
 @Configuration
 public class DataInitializer {
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Bean
     CommandLineRunner initRolesAndPrivileges(
         PrivilegeRepository privilegeRepository,
         RoleRepository roleRepository,
-        DepartmentRepository departmentRepository
+        DepartmentRepository departmentRepository,
+        EmployeeRepository employeeRepository
     ) {
         return _ -> {
             // Inicializar departamentos primero
@@ -72,6 +81,10 @@ public class DataInitializer {
                     viewMyInteractions, comment, like, favorites),
                 roleRepository
             );
+
+
+            // Inicializar usuarios
+            initializeUsers(employeeRepository, departmentRepository, roleRepository);
         };
     }
 
@@ -102,11 +115,37 @@ public class DataInitializer {
         createDepartmentIfNotFound("Gestión", "Departamento de Gestión", departmentRepository);
         createDepartmentIfNotFound("Otros", "Otros departamentos", departmentRepository);
     }
+
+    private void initializeUsers(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, RoleRepository roleRepository) {
+        createUserIfNotFound("tomas@prueba.com", "admin", "admin", Role.ADMIN, (long) 1, employeeRepository, departmentRepository, roleRepository);
+        createUserIfNotFound("superadmin@example.com", "superadmin", "superadmin", Role.SUPERVISOR, (long) 1, employeeRepository, departmentRepository, roleRepository);
+        createUserIfNotFound("employee@example.com", "employee", "employee", Role.EMPLOYEE, (long) 1, employeeRepository, departmentRepository, roleRepository);
+    }
     
     private void createDepartmentIfNotFound(String name, String description, DepartmentRepository departmentRepository) {
         if (!departmentRepository.existsByName(name)) {
             DepartmentModel department = new DepartmentModel(name, description);
             departmentRepository.save(department);
+        }
+    }
+
+    private void createUserIfNotFound(String email, String name, String password, Role role, Long departmentId, EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, RoleRepository roleRepository) {
+        if (!employeeRepository.existsByEmail(email)) {
+            RoleModel roleModel = roleRepository.findByName(role)
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + role));
+            
+            DepartmentModel departmentModel = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new RuntimeException("Departamento no encontrado con ID: " + departmentId));
+            
+            EmployeeModel employee = new EmployeeModel(
+                name,
+                email,
+                passwordEncoder.encode(password),
+                roleModel,
+                departmentModel
+            );
+            
+            employeeRepository.save(employee);
         }
     }
 }
