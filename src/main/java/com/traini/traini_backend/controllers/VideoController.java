@@ -26,7 +26,7 @@ public class VideoController {
             @RequestParam String title,
             @RequestParam String description,
             @RequestParam Long department_id,
-            @RequestParam Integer duration
+            @RequestParam Long duration
             ) {
         
         try {
