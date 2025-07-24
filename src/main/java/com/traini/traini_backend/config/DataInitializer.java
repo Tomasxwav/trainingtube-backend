@@ -1,6 +1,5 @@
 package com.traini.traini_backend.config;
 
-import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,9 +116,9 @@ public class DataInitializer {
     }
 
     private void initializeUsers(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, RoleRepository roleRepository) {
-        createUserIfNotFound("tomas@prueba.com", "admin", "admin", Role.ADMIN, (long) 1, employeeRepository, departmentRepository, roleRepository);
-        createUserIfNotFound("superadmin@example.com", "superadmin", "superadmin", Role.SUPERVISOR, (long) 1, employeeRepository, departmentRepository, roleRepository);
-        createUserIfNotFound("employee@example.com", "employee", "employee", Role.EMPLOYEE, (long) 1, employeeRepository, departmentRepository, roleRepository);
+        createUserIfNotFound("tomas@prueba.com", "admin", "Prueba123", Role.ADMIN, (long) 1, employeeRepository, departmentRepository, roleRepository);
+        createUserIfNotFound("superadmin@example.com", "superadmin", "Prueba123", Role.SUPERVISOR, (long) 1, employeeRepository, departmentRepository, roleRepository);
+        createUserIfNotFound("employee@example.com", "employee", "employee123", Role.EMPLOYEE, (long) 1, employeeRepository, departmentRepository, roleRepository);
     }
     
     private void createDepartmentIfNotFound(String name, String description, DepartmentRepository departmentRepository) {
