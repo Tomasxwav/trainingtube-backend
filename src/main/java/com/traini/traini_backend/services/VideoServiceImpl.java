@@ -34,7 +34,7 @@ public class VideoServiceImpl implements VideoService {
   
 
     @Override
-    public String uploadAndSaveVideo(MultipartFile videoFile, MultipartFile thumbnail, String title, String description, DepartmentModel department) throws Exception {
+    public String uploadAndSaveVideo(MultipartFile videoFile, MultipartFile thumbnail, String title, String description, DepartmentModel department, Integer duration) throws Exception {
         String videoUrl = firebaseStorageService.uploadVideo(videoFile);
         String thumbnailUrl = firebaseStorageService.uploadThumbnail(thumbnail);
 
@@ -46,6 +46,8 @@ public class VideoServiceImpl implements VideoService {
         video.setUploadDate(new Date());
         video.setThumbnailUrl(thumbnailUrl);
         video.setDepartment(department);
+        video.setDuration(duration);
+        video.setViews(0);
 
         VideoModel savedVideo = videoRepository.save(video);
 

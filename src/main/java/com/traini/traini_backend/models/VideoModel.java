@@ -22,6 +22,12 @@ public class VideoModel {
     @Column(name = "url_thumbnail")
     private String thumbnailUrl;  // URL de Firebase Storage para el thumbnail
 
+    @Column(name = "duration")
+    private Integer duration;
+
+    @Column(name = "views")
+    private Integer views;
+
     @Column(name = "upload_date")
     private Date uploadDate;
 
@@ -32,11 +38,13 @@ public class VideoModel {
     public VideoModel() {
     }
 
-    public VideoModel(String title, String description, String videoUrl, String thumbnailUrl, Date uploadDate, DepartmentModel department) {
+    public VideoModel(String title, String description, String videoUrl, String thumbnailUrl, Date uploadDate, Integer duration, Integer views, DepartmentModel department) {
         this.title = title;
         this.description = description;
         this.videoUrl = videoUrl;
         this.thumbnailUrl = thumbnailUrl;
+        this.duration = duration;
+        this.views = views;
         this.uploadDate = uploadDate;
         this.department = department;
     }
@@ -87,6 +95,22 @@ public class VideoModel {
     }
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    public Integer getDuration() {
+        return this.duration;
+    }
+
+    public void setViews(Integer views) {
+        this.views = views;
+    }
+
+    public Integer getViews() {
+        return this.views;
     }
 
     public DepartmentModel getDepartment() {
