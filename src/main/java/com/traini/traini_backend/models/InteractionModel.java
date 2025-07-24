@@ -39,6 +39,9 @@ public class InteractionModel {
     @Column(name = "is_watched", nullable = false, columnDefinition = "boolean default false")
     private boolean isWatched;
 
+    @Column(name = "progress", nullable = false, columnDefinition = "integer default 0")
+    private int progress;
+
     @Column(name = "last_interaction_date", nullable = false)
     private Date lastInteractionDate;
 
@@ -52,6 +55,7 @@ public class InteractionModel {
         this.isFavorite = isFavorite;
         this.isPending = isPending;
         this.isWatched = isWatched;
+        this.progress = 0;
         this.lastInteractionDate = lastInteractionDate;
     }
 
@@ -101,6 +105,14 @@ public class InteractionModel {
 
     public void setWatched(boolean isWatched) {
         this.isWatched = isWatched;
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
     }
 
     public Date getLastInteractionDate() {
