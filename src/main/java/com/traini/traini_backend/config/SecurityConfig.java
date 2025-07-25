@@ -62,8 +62,8 @@ public class SecurityConfig {
                 "/interactions/favorites/**", 
                 "/interactions/likes/**", 
                 "/videos/department",
-                "/interactions/pending/**"
-                
+                "/interactions/pending/**",
+                "/comments/**"
                 ).authenticated()
 
                 .anyRequest().authenticated())
