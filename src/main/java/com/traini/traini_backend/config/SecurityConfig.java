@@ -21,6 +21,11 @@ public class SecurityConfig {
     public JwtAuthentificationFilter jwtTokenFilter(){
         return new JwtAuthentificationFilter();
     }
+    
+    @Bean
+    public TenantFilter tenantFilter(){
+        return new TenantFilter();
+    }
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -33,29 +38,33 @@ public class SecurityConfig {
                 "/auth/refresh-token")
                 .permitAll()
 
+                // Permisos exclusivos para Super Admin
+                .requestMatchers("/companies/**")
+                .hasRole("SUPER_ADMIN")
+
                 // Permisos para Administrador
                 .requestMatchers(
                 "/employees/**",
                 "/supervisors/**",
                 "/videos/admin",
                 "/metrics/**"
-                ).hasRole("ADMIN")
+                ).hasAnyRole("SUPER_ADMIN", "ADMIN")
                 
                 // Permisos solo para Supervisor
                 .requestMatchers(
                 "/employees/department",
                 "/metrics/department"
-                ).hasRole("SUPERVISOR")
+                ).hasAnyRole("SUPER_ADMIN", "SUPERVISOR")
                 
                 // Permisos para Supervisor y Empleado
                 .requestMatchers(
                 "/metrics/info/**"
-                ).hasAnyRole("SUPERVISOR", "EMPLOYEE")
+                ).hasAnyRole("SUPER_ADMIN", "SUPERVISOR", "EMPLOYEE")
 
                 // Permisos para Supervisor y Administrador
                 .requestMatchers(
                 "/auth/register"
-                ).hasAnyRole("ADMIN", "SUPERVISOR")
+                ).hasAnyRole("SUPER_ADMIN", "ADMIN", "SUPERVISOR")
 
                 // Permisos generales (todos los roles autenticados)
                 .requestMatchers(
@@ -69,7 +78,8 @@ public class SecurityConfig {
                 .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
             .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint()))
-            .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(tenantFilter(), JwtAuthentificationFilter.class);
         return http.build();
     }
 

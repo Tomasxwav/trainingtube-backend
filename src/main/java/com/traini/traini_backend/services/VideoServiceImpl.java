@@ -16,6 +16,7 @@ import com.traini.traini_backend.repository.EmployeeRepository;
 import com.traini.traini_backend.repository.InteractionRepository;
 import com.traini.traini_backend.repository.VideoRepository;
 import com.traini.traini_backend.services.interfaces.VideoService;
+import com.traini.traini_backend.config.TenantContext;
 
 @Service
 public class VideoServiceImpl implements VideoService {
@@ -76,6 +77,10 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public List<VideoModel> findAll() {
+        Long tenantId = TenantContext.getCurrentTenant();
+        if (tenantId != null) {
+            return videoRepository.findByCompanyId(tenantId);
+        }
         return (List<VideoModel>) videoRepository.findAll();
     }
 

@@ -25,6 +25,10 @@ public class DepartmentModel {
     @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean active = true;
     
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "company_id", nullable = false)
+    private CompanyModel company;
+    
     // Relación con empleados
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
@@ -47,6 +51,13 @@ public class DepartmentModel {
         this.name = name;
         this.description = description;
         this.active = active;
+    }
+    
+    public DepartmentModel(String name, String description, CompanyModel company) {
+        this.name = name;
+        this.description = description;
+        this.company = company;
+        this.active = true;
     }
     
     public Long getId() {
@@ -95,5 +106,13 @@ public class DepartmentModel {
     
     public void setVideos(Set<VideoModel> videos) {
         this.videos = videos;
+    }
+    
+    public CompanyModel getCompany() {
+        return company;
+    }
+    
+    public void setCompany(CompanyModel company) {
+        this.company = company;
     }
 }

@@ -16,9 +16,12 @@ import com.traini.traini_backend.dto.auth.RegisterRequest;
 import com.traini.traini_backend.models.EmployeeModel;
 import com.traini.traini_backend.models.RoleModel;
 import com.traini.traini_backend.models.DepartmentModel;
+import com.traini.traini_backend.models.CompanyModel;
 import com.traini.traini_backend.repository.RoleRepository;
+import com.traini.traini_backend.repository.CompanyRepository;
 import com.traini.traini_backend.services.interfaces.DepartmentService;
 import com.traini.traini_backend.security.JwtUtil;
+import com.traini.traini_backend.config.TenantContext;
 
 @Service
 public class AuthService {
@@ -29,14 +32,16 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RoleRepository roleRepository;
+    private final CompanyRepository companyRepository;
 
-    public AuthService(EmployeeServiceImpl employeeService, DepartmentService departmentService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, AuthenticationManagerBuilder authenticationManagerBuilder, RoleRepository roleRepository) {
+    public AuthService(EmployeeServiceImpl employeeService, DepartmentService departmentService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, AuthenticationManagerBuilder authenticationManagerBuilder, RoleRepository roleRepository, CompanyRepository companyRepository) {
         this.employeeService = employeeService;
         this.departmentService = departmentService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.roleRepository = roleRepository;
+        this.companyRepository = companyRepository;
     }
 
     public LoginResponse authenticate(String email, String password){
@@ -69,13 +74,29 @@ public class AuthService {
             throw new IllegalArgumentException("Departamento no encontrado con ID: " + registerDto.getDepartmentId());
         }
 
-        EmployeeModel user = new EmployeeModel(
-            registerDto.getName(),
-            registerDto.getEmail(),
-            passwordEncoder.encode(registerDto.getPassword()),
-            roleModel,
-            departmentModel
-        );
+        // Auto-asignar company si hay contexto de tenant y no es super admin
+        EmployeeModel user;
+        Long tenantId = TenantContext.getCurrentTenant();
+        if (tenantId != null && registerDto.getRole() != com.traini.traini_backend.enums.Role.SUPER_ADMIN) {
+            CompanyModel company = companyRepository.findById(tenantId)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+            user = new EmployeeModel(
+                registerDto.getName(),
+                registerDto.getEmail(),
+                passwordEncoder.encode(registerDto.getPassword()),
+                roleModel,
+                departmentModel
+            );
+            user.setCompany(company);
+        } else {
+            user = new EmployeeModel(
+                registerDto.getName(),
+                registerDto.getEmail(),
+                passwordEncoder.encode(registerDto.getPassword()),
+                roleModel,
+                departmentModel
+            );
+        }
 
         employeeService.save(user);
     }

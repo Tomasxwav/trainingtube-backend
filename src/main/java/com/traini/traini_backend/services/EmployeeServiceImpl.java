@@ -13,10 +13,13 @@ import com.traini.traini_backend.models.EmployeeModel;
 import com.traini.traini_backend.models.InteractionModel;
 import com.traini.traini_backend.models.VideoModel;
 import com.traini.traini_backend.models.DepartmentModel;
+import com.traini.traini_backend.models.CompanyModel;
 import com.traini.traini_backend.repository.EmployeeRepository;
 import com.traini.traini_backend.repository.InteractionRepository;
 import com.traini.traini_backend.repository.VideoRepository;
+import com.traini.traini_backend.repository.CompanyRepository;
 import com.traini.traini_backend.services.interfaces.EmployeeService;
+import com.traini.traini_backend.config.TenantContext;
 
 @Service
 public class EmployeeServiceImpl implements UserDetailsService, EmployeeService {
@@ -29,6 +32,9 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
 
     @Autowired
     private InteractionRepository interactionRepository;
+    
+    @Autowired
+    private CompanyRepository companyRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -48,7 +54,11 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
 
     @Override
     public List<EmployeeModel> findAll() {
-        return (List<EmployeeModel>) employeeRepository.findAll();
+        Long tenantId = TenantContext.getCurrentTenant();
+        if (tenantId != null) {
+            return employeeRepository.findByCompanyIdExcludingSuperAdmin(tenantId);
+        }
+        return employeeRepository.findAllExcludingSuperAdmin();
     }
 
 
@@ -59,6 +69,14 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
 
     @Override
     public EmployeeModel save(EmployeeModel employee) {
+        // Auto-asignar company si hay contexto de tenant y el empleado no tiene company asignada
+        Long tenantId = TenantContext.getCurrentTenant();
+        if (tenantId != null && employee.getCompany() == null) {
+            CompanyModel company = companyRepository.findById(tenantId)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+            employee.setCompany(company);
+        }
+        
         EmployeeModel savedEmployee = employeeRepository.save(employee);
         assignDepartmentVideosAsPending(savedEmployee);
         return savedEmployee;
