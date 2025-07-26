@@ -3,6 +3,7 @@ package com.traini.traini_backend.config;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,15 @@ import com.traini.traini_backend.repository.CompanyRepository;
 
 @Configuration
 public class DataInitializer {
+
+    @Value("${super.admin.email}")
+    private String superAdminEmail;
+
+    @Value("${super.admin.password}")
+    private String superAdminPassword;
+
+    @Value("${super.admin.name}")
+    private String superAdminName;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -143,8 +153,8 @@ public class DataInitializer {
 
     private void initializeUsers(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, RoleRepository roleRepository, CompanyRepository companyRepository) {
         // Super Admin (no pertenece a ninguna company)
-        createSuperAdminIfNotFound("superadmin@traini.com", "Super Admin", "SuperAdmin123", Role.SUPER_ADMIN, employeeRepository, roleRepository);
-        
+        createSuperAdminIfNotFound(superAdminEmail, superAdminName, superAdminPassword, Role.SUPER_ADMIN, employeeRepository, roleRepository);
+
         // Usuarios para TechCorp Solutions
         CompanyModel techCorp = companyRepository.findByCompanyName("TechCorp Solutions").orElse(null);
         if (techCorp != null) {
@@ -152,13 +162,13 @@ public class DataInitializer {
             DepartmentModel desarrolloDept = departmentRepository.findByNameAndCompany("Desarrollo", techCorp).orElse(null);
             
             if (ventasDept != null) {
-                createUserIfNotFound("admin.techcorp@traini.com", "Admin TechCorp", "Admin123", Role.ADMIN, ventasDept, employeeRepository, roleRepository);
-                createUserIfNotFound("vendedor@techcorp.com", "Juan Vendedor", "Employee123", Role.EMPLOYEE, ventasDept, employeeRepository, roleRepository);
+                createUserIfNotFound("daniel@prueba.com", "Admin Daniel TechCorp", "Prueba123", Role.ADMIN, ventasDept, employeeRepository, roleRepository);
+                createUserIfNotFound("alain@prueba.com", "Alain Vendedor", "Prueba123", Role.EMPLOYEE, ventasDept, employeeRepository, roleRepository);
             }
             
             if (desarrolloDept != null) {
-                createUserIfNotFound("supervisor.dev@techcorp.com", "María Supervisora", "Supervisor123", Role.SUPERVISOR, desarrolloDept, employeeRepository, roleRepository);
-                createUserIfNotFound("developer@techcorp.com", "Carlos Desarrollador", "Employee123", Role.EMPLOYEE, desarrolloDept, employeeRepository, roleRepository);
+                createUserIfNotFound("david@prueba.com", "David Supervisor", "Prueba123", Role.SUPERVISOR, desarrolloDept, employeeRepository, roleRepository);
+                createUserIfNotFound("javi@prueba.com", "Javi Desarrollador", "Prueba123", Role.EMPLOYEE, desarrolloDept, employeeRepository, roleRepository);
             }
         }
         
@@ -169,13 +179,13 @@ public class DataInitializer {
             DepartmentModel gestionDept = departmentRepository.findByNameAndCompany("Gestión", innovate).orElse(null);
             
             if (diseñoDept != null) {
-                createUserIfNotFound("admin.innovate@traini.com", "Admin Innovate", "Admin123", Role.ADMIN, diseñoDept, employeeRepository, roleRepository);
-                createUserIfNotFound("designer@innovate.com", "Ana Diseñadora", "Employee123", Role.EMPLOYEE, diseñoDept, employeeRepository, roleRepository);
+                createUserIfNotFound("amanda@prueba.com", "Admin Amanda Innovate", "Prueba123", Role.ADMIN, diseñoDept, employeeRepository, roleRepository);
+                createUserIfNotFound("fer@prueba.com", "Fer Diseñadora", "Prueba123", Role.EMPLOYEE, diseñoDept, employeeRepository, roleRepository);
             }
             
             if (gestionDept != null) {
-                createUserIfNotFound("supervisor.gestion@innovate.com", "Luis Supervisor", "Supervisor123", Role.SUPERVISOR, gestionDept, employeeRepository, roleRepository);
-                createUserIfNotFound("manager@innovate.com", "Laura Gerente", "Employee123", Role.EMPLOYEE, gestionDept, employeeRepository, roleRepository);
+                createUserIfNotFound("juan@prueba.com", "Juan Supervisor", "Prueba123", Role.SUPERVISOR, gestionDept, employeeRepository, roleRepository);
+                createUserIfNotFound("liz@prueba.com", "Liz Gerente", "Prueba123", Role.EMPLOYEE, gestionDept, employeeRepository, roleRepository);
             }
         }
     }
@@ -229,26 +239,6 @@ public class DataInitializer {
                 passwordEncoder.encode(password),
                 roleModel,
                 department
-            );
-            
-            employeeRepository.save(employee);
-        }
-    }
-
-    private void createUserIfNotFound(String email, String name, String password, Role role, Long departmentId, EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, RoleRepository roleRepository) {
-        if (!employeeRepository.existsByEmail(email)) {
-            RoleModel roleModel = roleRepository.findByName(role)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + role));
-            
-            DepartmentModel departmentModel = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new RuntimeException("Departamento no encontrado con ID: " + departmentId));
-            
-            EmployeeModel employee = new EmployeeModel(
-                name,
-                email,
-                passwordEncoder.encode(password),
-                roleModel,
-                departmentModel
             );
             
             employeeRepository.save(employee);
