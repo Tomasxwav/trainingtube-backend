@@ -184,17 +184,17 @@ public class DataInitializer {
         // Usuarios para Innovate Dynamics
         CompanyModel innovate = companyRepository.findByCompanyName("Innovate Dynamics").orElse(null);
         if (innovate != null) {
-            DepartmentModel diseñoDept = departmentRepository.findByNameAndCompany("Diseño", innovate).orElse(null);
-            DepartmentModel gestionDept = departmentRepository.findByNameAndCompany("Gestión", innovate).orElse(null);
+            DepartmentModel ventasDept = departmentRepository.findByNameAndCompany("Sales", innovate).orElse(null);
+            DepartmentModel soporteDept = departmentRepository.findByNameAndCompany("Soporte", innovate).orElse(null);
             
-            if (diseñoDept != null) {
-                createUserIfNotFound("amanda@prueba.com", "Admin Amanda Innovate", "Prueba123", Role.ADMIN, diseñoDept, employeeRepository, roleRepository);
-                createUserIfNotFound("fer@prueba.com", "Fer Diseñadora", "Prueba123", Role.EMPLOYEE, diseñoDept, employeeRepository, roleRepository);
+            if (ventasDept != null) {
+                createUserIfNotFound("amanda@prueba.com", "Admin Amanda Innovate", "Prueba123", Role.ADMIN, ventasDept, employeeRepository, roleRepository);
+                createUserIfNotFound("fer@prueba.com", "Fer Vendedor", "Prueba123", Role.EMPLOYEE, ventasDept, employeeRepository, roleRepository);
             }
             
-            if (gestionDept != null) {
-                createUserIfNotFound("juan@prueba.com", "Juan Supervisor", "Prueba123", Role.SUPERVISOR, gestionDept, employeeRepository, roleRepository);
-                createUserIfNotFound("liz@prueba.com", "Liz Gerente", "Prueba123", Role.EMPLOYEE, gestionDept, employeeRepository, roleRepository);
+            if (soporteDept != null) {
+                createUserIfNotFound("juan@prueba.com", "Juan Supervisor", "Prueba123", Role.SUPERVISOR, soporteDept, employeeRepository, roleRepository);
+                createUserIfNotFound("liz@prueba.com", "Liz Gerente", "Prueba123", Role.EMPLOYEE, soporteDept, employeeRepository, roleRepository);
             }
         }
     }
