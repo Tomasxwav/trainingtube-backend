@@ -140,14 +140,23 @@ public class DataInitializer {
             createDepartmentIfNotFound("Marketing", "Departamento de Marketing", techCorp, departmentRepository);
             createDepartmentIfNotFound("Desarrollo", "Departamento de Desarrollo", techCorp, departmentRepository);
             createDepartmentIfNotFound("Soporte", "Departamento de Soporte", techCorp, departmentRepository);
+            createDepartmentIfNotFound("Finanzas", "Departamento de Finanzas", techCorp, departmentRepository);
+            createDepartmentIfNotFound("Recursos Humanos", "Departamento de Recursos Humanos", techCorp, departmentRepository);
+            createDepartmentIfNotFound("Calidad", "Departamento de Calidad", techCorp, departmentRepository);
+            createDepartmentIfNotFound("Logística", "Departamento de Logística", techCorp, departmentRepository);
+            createDepartmentIfNotFound("Administración", "Departamento de Administración", techCorp, departmentRepository);
         }
         
         if (innovate != null) {
-            // Departamentos para Innovate Dynamics
-            createDepartmentIfNotFound("Diseño", "Departamento de Diseño", innovate, departmentRepository);
-            createDepartmentIfNotFound("Gestión", "Departamento de Gestión", innovate, departmentRepository);
-            createDepartmentIfNotFound("Investigación", "Departamento de Investigación", innovate, departmentRepository);
-            createDepartmentIfNotFound("Producción", "Departamento de Producción", innovate, departmentRepository);
+            createDepartmentIfNotFound("Sales", "Departamento de Ventas", innovate, departmentRepository);
+            createDepartmentIfNotFound("Marketing", "Departamento de Marketing", innovate, departmentRepository);
+            createDepartmentIfNotFound("Desarrollo", "Departamento de Desarrollo", innovate, departmentRepository);
+            createDepartmentIfNotFound("Soporte", "Departamento de Soporte", innovate, departmentRepository);
+            createDepartmentIfNotFound("Finanzas", "Departamento de Finanzas", innovate, departmentRepository);
+            createDepartmentIfNotFound("Recursos Humanos", "Departamento de Recursos Humanos", innovate, departmentRepository);
+            createDepartmentIfNotFound("Calidad", "Departamento de Calidad", innovate, departmentRepository);
+            createDepartmentIfNotFound("Logística", "Departamento de Logística", innovate, departmentRepository);
+            createDepartmentIfNotFound("Administración", "Departamento de Administración", innovate, departmentRepository);
         }
     }
 

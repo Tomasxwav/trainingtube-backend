@@ -14,7 +14,7 @@ public class DepartmentModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     @NotEmpty
     @Size(min = 2, max = 50)
     private String name;
