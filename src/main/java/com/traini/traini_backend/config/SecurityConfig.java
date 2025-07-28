@@ -23,6 +23,13 @@ public class SecurityConfig {
     }
 
     @Bean
+    public TenantFilter tenantFilter(){
+        return new TenantFilter();
+    }
+
+
+
+    @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             // .cors(Customizer.withDefaults()) // Deshabilitado - usando CorsConfig en su lugar
@@ -32,6 +39,10 @@ public class SecurityConfig {
                 "/auth/login", 
                 "/auth/refresh-token")
                 .permitAll()
+
+                // Permisos para superadmin
+                .requestMatchers("/companies/**")
+                .hasRole("SUPER_ADMIN")
 
                 // Permisos para Administrador
                 .requestMatchers(
@@ -69,7 +80,8 @@ public class SecurityConfig {
                 .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
             .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint()))
-            .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(tenantFilter(), JwtAuthentificationFilter.class);
         return http.build();
     }
 

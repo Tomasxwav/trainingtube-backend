@@ -5,16 +5,18 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Filter;
 
 @Entity
 @Table(name = "departments")
+@Filter(name = "tenantFilter", condition = "company_id = :companyId")
 public class DepartmentModel {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     @NotEmpty
     @Size(min = 2, max = 50)
     private String name;
@@ -24,6 +26,11 @@ public class DepartmentModel {
     
     @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean active = true;
+
+    // Relación con compania
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "company_id", nullable = false)
+    private CompanyModel company;
     
     // Relación con empleados
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -37,10 +44,11 @@ public class DepartmentModel {
     
     public DepartmentModel() {}
     
-    public DepartmentModel(String name, String description) {
+    public DepartmentModel(String name, String description, CompanyModel company) {
         this.name = name;
         this.description = description;
         this.active = true;
+        this.company = company;
     }
     
     public DepartmentModel(String name, String description, boolean active) {
@@ -95,5 +103,13 @@ public class DepartmentModel {
     
     public void setVideos(Set<VideoModel> videos) {
         this.videos = videos;
+    }
+
+    public CompanyModel getCompany() {
+        return company;
+    }
+    
+    public void setCompany(CompanyModel company) {
+        this.company = company;
     }
 }

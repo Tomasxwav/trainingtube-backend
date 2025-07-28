@@ -1,0 +1,15 @@
+meta {
+  name: getCompanies
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{url}}/companies
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

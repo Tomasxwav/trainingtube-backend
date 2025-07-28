@@ -11,9 +11,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.Filter;
 
 @Entity
 @Table(name = "employees")
+@Filter(name = "tenantFilter", condition = "company_id = :companyId")
 public class EmployeeModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,8 +41,12 @@ public class EmployeeModel {
     private RoleModel role;
     
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "department_id", nullable = false)
-    private DepartmentModel department;  
+    @JoinColumn(name = "department_id")
+    private DepartmentModel department;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "company_id")
+    private CompanyModel company;
     
     // Getters, setters y constructores
 
@@ -53,8 +59,17 @@ public class EmployeeModel {
         this.password = password;
         this.role = role;
         this.department = department;
+        this.company = department != null ? department.getCompany() : null;
     }
 
+    public EmployeeModel(String name, String email, String password, RoleModel role, DepartmentModel department, CompanyModel company) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.department = department;
+        this.company = company;
+    }
 
     public Long getId() {
         return id;
@@ -102,5 +117,13 @@ public class EmployeeModel {
 
     public void setDepartment(DepartmentModel department) {
         this.department = department;
+    }
+
+    public CompanyModel getCompany() {
+        return company;
+    }
+
+    public void setCompany(CompanyModel company) {
+        this.company = company;
     }
 }

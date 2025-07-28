@@ -83,13 +83,28 @@ public class JwtUtil {
     }
 
     public boolean hasAuthorities(String token) {
-    try {
-        Claims claims = extractAllClaims(token);
-        return claims.get("authorities") != null;
-    } catch (Exception e) {
-        return false;
+        try {
+            Claims claims = extractAllClaims(token);
+            return claims.get("authorities") != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
-}
 
+    public boolean isSuperAdmin(String token) {
+        try {
+            Claims claims = extractAllClaims(token);
+            Object authoritiesObj = claims.get("authorities");
+            if (authoritiesObj instanceof Collection<?>) {
+                Collection<?> authorities = (Collection<?>) authoritiesObj;
+                if (authorities.contains("ROLE_SUPER_ADMIN")) {
+                    return true;
+                }
+            }
+            return false;
 
+        } catch (Exception e) {
+            return false;
+        }
+    }
 } 
