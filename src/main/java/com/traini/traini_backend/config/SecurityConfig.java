@@ -42,11 +42,20 @@ public class SecurityConfig {
                 .requestMatchers("/companies/**")
                 .hasRole("SUPER_ADMIN")
 
+                // Permisos generales (todos los roles autenticados) - DEBE IR ANTES de /employees/**
+                .requestMatchers(
+                "/interactions/favorites/**", 
+                "/interactions/likes/**", 
+                "/videos/department/**",
+                "/interactions/pending/**",
+                "/comments/**",
+                "/employees/me"
+                ).authenticated()
+
                 // Permisos para Administrador
                 .requestMatchers(
                 "/employees/**",
                 "/supervisors/**",
-                "/videos/admin",
                 "/metrics/**"
                 ).hasAnyRole("SUPER_ADMIN", "ADMIN")
                 
@@ -63,17 +72,9 @@ public class SecurityConfig {
 
                 // Permisos para Supervisor y Administrador
                 .requestMatchers(
-                "/auth/register"
+                "/auth/register",
+                "/videos/admin"
                 ).hasAnyRole("SUPER_ADMIN", "ADMIN", "SUPERVISOR")
-
-                // Permisos generales (todos los roles autenticados)
-                .requestMatchers(
-                "/interactions/favorites/**", 
-                "/interactions/likes/**", 
-                "/videos/department",
-                "/interactions/pending/**",
-                "/comments/**"
-                ).authenticated()
 
                 .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
