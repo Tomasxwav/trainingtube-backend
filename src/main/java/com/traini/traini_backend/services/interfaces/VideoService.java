@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.traini.traini_backend.dto.video.UpdateVideoDto;
 import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.models.VideoModel;
 
@@ -13,5 +14,6 @@ public interface VideoService {
     List<VideoModel> findAll(Authentication authentication);
     
     void deleteVideo(Long videoId, Authentication authentication) throws Exception;
+    void updateVideo(Long videoId, UpdateVideoDto updateRequest) throws Exception;
 
 }

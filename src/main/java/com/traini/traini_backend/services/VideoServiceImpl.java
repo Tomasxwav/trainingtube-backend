@@ -10,11 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.traini.traini_backend.dto.video.UpdateVideoDto;
 import com.traini.traini_backend.enums.Role;
 import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.models.EmployeeModel;
 import com.traini.traini_backend.models.InteractionModel;
 import com.traini.traini_backend.models.VideoModel;
+import com.traini.traini_backend.repository.DepartmentRepository;
 import com.traini.traini_backend.repository.EmployeeRepository;
 import com.traini.traini_backend.repository.InteractionRepository;
 import com.traini.traini_backend.repository.VideoRepository;
@@ -35,6 +37,9 @@ public class VideoServiceImpl implements VideoService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
   
 
     @Override
@@ -185,5 +190,25 @@ public class VideoServiceImpl implements VideoService {
         }
         
         videoRepository.delete(video);
+    }
+
+    @Override
+    public void updateVideo(Long videoId, UpdateVideoDto updateRequest) throws Exception {
+        VideoModel video = videoRepository.findById(videoId)
+            .orElseThrow(() -> new RuntimeException("Video not found with id: " + videoId));
+
+        if (updateRequest.getTitle() != null) {
+            video.setTitle(updateRequest.getTitle());
+        }
+        if (updateRequest.getDescription() != null) {
+            video.setDescription(updateRequest.getDescription());
+        }
+        if (updateRequest.getDepartmentId() != null) {
+            DepartmentModel department = departmentRepository.findById(updateRequest.getDepartmentId())
+                .orElseThrow(() -> new RuntimeException("Department not found with id: " + updateRequest.getDepartmentId()));
+            video.setDepartment(department);
+        }
+
+        videoRepository.save(video);
     }
 }

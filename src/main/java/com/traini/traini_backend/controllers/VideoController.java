@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.traini.traini_backend.dto.video.UpdateVideoDto;
 import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.services.VideoServiceImpl;
 import com.traini.traini_backend.services.interfaces.DepartmentService;
@@ -71,6 +72,16 @@ public class VideoController {
         try {
             videoService.deleteVideo(videoid, authentication);
             return ResponseEntity.ok("Video eliminado exitosamente");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/admin/{videoid}")
+    public ResponseEntity<?> updateVideo(@PathVariable Long videoid, @RequestBody UpdateVideoDto updateRequest) {
+        try {
+            videoService.updateVideo(videoid, updateRequest);
+            return ResponseEntity.ok("Video actualizado exitosamente");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
