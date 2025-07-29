@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -68,6 +69,14 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
     }
 
     @Override
+    public List<EmployeeModel> findByDepartment(Authentication authentication) {
+        String email = authentication.getName();
+        EmployeeModel employee = employeeRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
+        return employeeRepository.findByDepartment(employee.getDepartment());
+    }
+
+    @Override
     public EmployeeModel save(EmployeeModel employee) {
         // Auto-asignar company si hay contexto de tenant y el empleado no tiene company asignada
         Long tenantId = TenantContext.getCurrentTenant();
@@ -97,6 +106,73 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
     @Override
     public EmployeeModel delete(Long id) {
         EmployeeModel employeeFound = findById(id);
+        employeeRepository.deleteById(id);
+        return employeeFound;
+    }
+
+    @Override
+    public EmployeeModel saveAsSupervisor(EmployeeModel employee, Authentication authentication) {
+        String email = authentication.getName();
+        EmployeeModel supervisor = employeeRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Supervisor no encontrado con email: " + email));
+        
+        if (employee.getDepartment() != null && !employee.getDepartment().getId().equals(supervisor.getDepartment().getId())) {
+            throw new RuntimeException("No tienes permisos para crear empleados en este departamento. Solo puedes crear empleados en tu propio departamento.");
+        }
+        
+        if (employee.getDepartment() == null) {
+            employee.setDepartment(supervisor.getDepartment());
+        }
+        
+        // Auto-asignar company si hay contexto de tenant y el empleado no tiene company asignada
+        Long tenantId = TenantContext.getCurrentTenant();
+        if (tenantId != null && employee.getCompany() == null) {
+            CompanyModel company = companyRepository.findById(tenantId)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+            employee.setCompany(company);
+        }
+        
+        EmployeeModel savedEmployee = employeeRepository.save(employee);
+        assignDepartmentVideosAsPending(savedEmployee);
+        return savedEmployee;
+    }
+
+    @Override
+    public EmployeeModel updateAsSupervisor(Long id, EmployeeModel employee, Authentication authentication) {
+        String email = authentication.getName();
+        EmployeeModel supervisor = employeeRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Supervisor no encontrado con email: " + email));
+        
+        EmployeeModel employeeFound = findById(id);
+        
+        if (!employeeFound.getDepartment().getId().equals(supervisor.getDepartment().getId())) {
+            throw new RuntimeException("No tienes permisos para actualizar este empleado. Solo puedes actualizar empleados de tu propio departamento.");
+        }
+        
+        if (employee.getDepartment() != null && !employee.getDepartment().getId().equals(supervisor.getDepartment().getId())) {
+            throw new RuntimeException("No puedes transferir empleados a otro departamento. Solo puedes mantener empleados en tu propio departamento.");
+        }
+
+        if( employee.getName() != null ) employeeFound.setName(employee.getName());
+        if( employee.getEmail() != null ) employeeFound.setEmail(employee.getEmail());
+        if( employee.getPassword() != null ) employeeFound.setPassword(employee.getPassword());
+        if( employee.getRole() != null ) employeeFound.setRole(employee.getRole());
+
+        return employeeRepository.save(employeeFound);
+    }
+
+    @Override
+    public EmployeeModel deleteAsSupervisor(Long id, Authentication authentication) {
+        String email = authentication.getName();
+        EmployeeModel supervisor = employeeRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Supervisor no encontrado con email: " + email));
+        
+        EmployeeModel employeeFound = findById(id);
+        
+        if (!employeeFound.getDepartment().getId().equals(supervisor.getDepartment().getId())) {
+            throw new RuntimeException("No tienes permisos para eliminar este empleado. Solo puedes eliminar empleados de tu propio departamento.");
+        }
+        
         employeeRepository.deleteById(id);
         return employeeFound;
     }
