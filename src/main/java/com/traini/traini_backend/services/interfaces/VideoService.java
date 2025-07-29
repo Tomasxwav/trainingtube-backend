@@ -9,8 +9,8 @@ import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.models.VideoModel;
 
 public interface VideoService {
-    String uploadAndSaveVideo(MultipartFile video, MultipartFile thumbnail , String title, String description, DepartmentModel department, Long duration) throws Exception; 
-    List<VideoModel> findAll();
+    String uploadAndSaveVideo(MultipartFile video, MultipartFile thumbnail , String title, String description, DepartmentModel department, Long duration, Authentication authentication) throws Exception; 
+    List<VideoModel> findAll(Authentication authentication);
     
     void deleteVideo(Long videoId, Authentication authentication) throws Exception;
 

@@ -26,12 +26,13 @@ public class VideoController {
             @RequestParam String title,
             @RequestParam String description,
             @RequestParam Long department_id,
-            @RequestParam Long duration
+            @RequestParam Long duration,
+            Authentication authentication
             ) {
         
         try {
             DepartmentModel department = departmentService.findById(department_id);
-            String videoUrl = videoService.uploadAndSaveVideo(video, thumbnail, title, description, department, duration);
+            String videoUrl = videoService.uploadAndSaveVideo(video, thumbnail, title, description, department, duration, authentication);
             return ResponseEntity.ok("Video subido exitosamente. URL: " + videoUrl);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
@@ -39,9 +40,9 @@ public class VideoController {
     }
 
     @GetMapping("/admin")
-    public ResponseEntity<?> getAllVideos() {
+    public ResponseEntity<?> getAllVideos(Authentication authentication) {
         try {
-            return ResponseEntity.ok(videoService.findAll());
+            return ResponseEntity.ok(videoService.findAll(authentication));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
         }

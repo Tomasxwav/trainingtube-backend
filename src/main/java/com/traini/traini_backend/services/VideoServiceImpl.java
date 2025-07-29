@@ -38,7 +38,32 @@ public class VideoServiceImpl implements VideoService {
   
 
     @Override
-    public String uploadAndSaveVideo(MultipartFile videoFile, MultipartFile thumbnail, String title, String description, DepartmentModel department, Long duration) throws Exception {
+    public String uploadAndSaveVideo(MultipartFile videoFile, MultipartFile thumbnail, String title, String description, DepartmentModel department, Long duration, Authentication authentication) throws Exception {
+        String email = authentication.getName();
+        Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(email);
+        
+        if (!employeeOpt.isPresent()) {
+            throw new Exception("Usuario no encontrado");
+        }
+        
+        EmployeeModel employee = employeeOpt.get();
+        Role userRole = employee.getRole().getName();
+        
+        if (!userRole.equals(Role.ADMIN) && !userRole.equals(Role.SUPER_ADMIN) && !userRole.equals(Role.SUPERVISOR)) {
+            throw new Exception("No tienes permisos para subir videos. Solo administradores y supervisores pueden subir videos.");
+        }
+        if (userRole.equals(Role.SUPERVISOR)) {
+            if (!department.getId().equals(employee.getDepartment().getId())) {
+                throw new Exception("No tienes permisos para subir videos a este departamento. Los supervisores solo pueden subir videos a su propio departamento.");
+            }
+        }
+        if (!userRole.equals(Role.SUPER_ADMIN)) {
+            Long tenantId = TenantContext.getCurrentTenant();
+            if (tenantId != null && !department.getCompany().getId().equals(tenantId)) {
+                throw new Exception("No tienes permisos para subir videos a este departamento.");
+            }
+        }
+        
         String videoUrl = firebaseStorageService.uploadVideo(videoFile);
         String thumbnailUrl = firebaseStorageService.uploadThumbnail(thumbnail);
 
@@ -79,9 +104,17 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public List<VideoModel> findAll() {
+    public List<VideoModel> findAll(Authentication authentication) {
         Long tenantId = TenantContext.getCurrentTenant();
         if (tenantId != null) {
+            Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(authentication.getName());
+            if (employeeOpt.isPresent()) {
+                Role userRole = employeeOpt.get().getRole().getName();
+                if (userRole.equals(Role.SUPERVISOR)) {
+                    Long departmentId = employeeOpt.get().getDepartment().getId();
+                    return videoRepository.findByCompanyIdAndDepartmentId(tenantId, departmentId);
+                }
+            }
             return videoRepository.findByCompanyId(tenantId);
         }
         return (List<VideoModel>) videoRepository.findAll();
