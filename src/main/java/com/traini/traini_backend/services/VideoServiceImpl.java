@@ -103,7 +103,7 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     @Transactional
-    public void deleteVideoAsSupervisor(Long videoId, Authentication authentication) throws Exception {
+    public void deleteVideo(Long videoId, Authentication authentication) throws Exception {
         String email = authentication.getName();
         Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(email);
         
@@ -112,59 +112,10 @@ public class VideoServiceImpl implements VideoService {
         }
         
         EmployeeModel employee = employeeOpt.get();
-        
-        if (!employee.getRole().getName().equals(Role.SUPERVISOR)) {
-            throw new Exception("No tienes permisos para eliminar videos. Solo los supervisores pueden eliminar videos de su departamento.");
-        }
-        
-        Optional<VideoModel> videoOpt = videoRepository.findById(videoId);
-        if (!videoOpt.isPresent()) {
-            throw new Exception("Video no encontrado");
-        }
-        
-        VideoModel video = videoOpt.get();
-        
-        if (!video.getDepartment().getId().equals(employee.getDepartment().getId())) {
-            throw new Exception("No tienes permisos para eliminar este video. Solo puedes eliminar videos de tu departamento.");
-        }
-        
-        Long tenantId = TenantContext.getCurrentTenant();
-        if (tenantId != null && !video.getDepartment().getCompany().getId().equals(tenantId)) {
-            throw new Exception("No tienes permisos para eliminar este video.");
-        }
-        
-        // Eliminar primero las interacciones relacionadas con el video
-        interactionRepository.deleteByVideoId(videoId);
-        
-        try {
-            if (video.getVideoUrl() != null) {
-                firebaseStorageService.deleteVideo(video.getVideoUrl());
-            }
-            if (video.getThumbnailUrl() != null) {
-                firebaseStorageService.deleteThumbnail(video.getThumbnailUrl());
-            }
-        } catch (Exception e) {
-            System.err.println("Error eliminando archivos de Firebase: " + e.getMessage());
-        }
-        
-        videoRepository.delete(video);
-    }
-
-    @Override
-    @Transactional
-    public void deleteVideoAsAdmin(Long videoId, Authentication authentication) throws Exception {
-        String email = authentication.getName();
-        Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(email);
-        
-        if (!employeeOpt.isPresent()) {
-            throw new Exception("Usuario no encontrado");
-        }
-        
-        EmployeeModel employee = employeeOpt.get();
-        
         Role userRole = employee.getRole().getName();
-        if (!userRole.equals(Role.ADMIN) && !userRole.equals(Role.SUPER_ADMIN)) {
-            throw new Exception("No tienes permisos para eliminar videos. Solo los administradores pueden eliminar cualquier video.");
+        
+        if (!userRole.equals(Role.ADMIN) && !userRole.equals(Role.SUPER_ADMIN) && !userRole.equals(Role.SUPERVISOR)) {
+            throw new Exception("No tienes permisos para eliminar videos. Solo administradores y supervisores pueden eliminar videos.");
         }
         
         Optional<VideoModel> videoOpt = videoRepository.findById(videoId);
@@ -174,7 +125,13 @@ public class VideoServiceImpl implements VideoService {
         
         VideoModel video = videoOpt.get();
         
-        if (userRole.equals(Role.ADMIN)) {
+        if (userRole.equals(Role.SUPERVISOR)) {
+            if (!video.getDepartment().getId().equals(employee.getDepartment().getId())) {
+                throw new Exception("No tienes permisos para eliminar este video. Los supervisores solo pueden eliminar videos de su departamento.");
+            }
+        }
+        
+        if (!userRole.equals(Role.SUPER_ADMIN)) {
             Long tenantId = TenantContext.getCurrentTenant();
             if (tenantId != null && !video.getDepartment().getCompany().getId().equals(tenantId)) {
                 throw new Exception("No tienes permisos para eliminar este video.");
@@ -194,12 +151,6 @@ public class VideoServiceImpl implements VideoService {
             System.err.println("Error eliminando archivos de Firebase: " + e.getMessage());
         }
         
-        // Eliminar el video de la base de datos
         videoRepository.delete(video);
-    }
-
-    @Override
-    public void deleteDepartmentVideos(Long videoid, Authentication authentication) {
-     
     }
 }

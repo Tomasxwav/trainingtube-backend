@@ -12,8 +12,6 @@ public interface VideoService {
     String uploadAndSaveVideo(MultipartFile video, MultipartFile thumbnail , String title, String description, DepartmentModel department, Long duration) throws Exception; 
     List<VideoModel> findAll();
     
-    void deleteVideoAsSupervisor(Long videoId, Authentication authentication) throws Exception;
-    void deleteVideoAsAdmin(Long videoId, Authentication authentication) throws Exception;
-    void deleteDepartmentVideos(Long videoid, Authentication authentication);
+    void deleteVideo(Long videoId, Authentication authentication) throws Exception;
 
 }

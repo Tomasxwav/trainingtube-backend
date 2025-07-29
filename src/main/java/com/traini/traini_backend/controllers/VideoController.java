@@ -65,21 +65,11 @@ public class VideoController {
         }
     }
 
-    @DeleteMapping("/supervisor/{videoid}")
-    public ResponseEntity<?> deleteSupervisorVideo(@PathVariable Long videoid, Authentication authentication) {
-        try {
-            videoService.deleteVideoAsSupervisor(videoid, authentication);
-            return ResponseEntity.ok("Video eliminado exitosamente por supervisor");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
-        }
-    }
-
     @DeleteMapping("/admin/{videoid}")
-    public ResponseEntity<?> deleteAdminVideo(@PathVariable Long videoid, Authentication authentication) {
+    public ResponseEntity<?> deleteVideo(@PathVariable Long videoid, Authentication authentication) {
         try {
-            videoService.deleteVideoAsAdmin(videoid, authentication);
-            return ResponseEntity.ok("Video eliminado exitosamente por administrador");
+            videoService.deleteVideo(videoid, authentication);
+            return ResponseEntity.ok("Video eliminado exitosamente");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }

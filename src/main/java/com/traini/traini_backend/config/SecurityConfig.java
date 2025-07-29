@@ -56,7 +56,6 @@ public class SecurityConfig {
                 .requestMatchers(
                 "/employees/**",
                 "/supervisors/**",
-                "/videos/admin",
                 "/metrics/**"
                 ).hasAnyRole("SUPER_ADMIN", "ADMIN")
                 
@@ -73,7 +72,8 @@ public class SecurityConfig {
 
                 // Permisos para Supervisor y Administrador
                 .requestMatchers(
-                "/auth/register"
+                "/auth/register",
+                "/videos/admin"
                 ).hasAnyRole("SUPER_ADMIN", "ADMIN", "SUPERVISOR")
 
                 .anyRequest().authenticated())
