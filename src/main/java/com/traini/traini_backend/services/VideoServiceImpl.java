@@ -90,4 +90,11 @@ public class VideoServiceImpl implements VideoService {
         DepartmentModel department = employeeRepository.findDepartmentById(employeeId);
         return videoRepository.findByDepartment(department);
     }
+
+    public Long countVideosByDepartment(Authentication authentication) {
+        String email = authentication.getName();
+        Long employeeId = employeeRepository.findByEmail(email).get().getId();
+        DepartmentModel department = employeeRepository.findDepartmentById(employeeId);
+        return videoRepository.countByDepartment(department);
+    }
 }

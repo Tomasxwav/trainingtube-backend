@@ -55,4 +55,13 @@ public class VideoController {
             return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
         }
     }
+
+    @GetMapping("/department/count")
+    public ResponseEntity<?> getDepartmentVideosCount(Authentication authentication) {
+        try {
+            return ResponseEntity.ok(videoService.countVideosByDepartment(authentication));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
+    }
 }
