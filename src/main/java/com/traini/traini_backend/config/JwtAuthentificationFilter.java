@@ -5,7 +5,6 @@ import com.traini.traini_backend.services.EmployeeServiceImpl;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.context.SecurityContextHolder;

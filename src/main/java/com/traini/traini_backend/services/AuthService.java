@@ -74,28 +74,40 @@ public class AuthService {
             throw new IllegalArgumentException("Departamento no encontrado con ID: " + registerDto.getDepartmentId());
         }
 
-        // Auto-asignar company si hay contexto de tenant y no es super admin
         EmployeeModel user;
         Long tenantId = TenantContext.getCurrentTenant();
-        if (tenantId != null && registerDto.getRole() != com.traini.traini_backend.enums.Role.SUPER_ADMIN) {
-            CompanyModel company = companyRepository.findById(tenantId)
-                .orElseThrow(() -> new RuntimeException("Company not found"));
-            user = new EmployeeModel(
-                registerDto.getName(),
-                registerDto.getEmail(),
-                passwordEncoder.encode(registerDto.getPassword()),
-                roleModel,
-                departmentModel
-            );
-            user.setCompany(company);
+        CompanyModel company = null;
+        
+        if (tenantId == null) {
+            if (registerDto.getCompanyId() == null) {
+                throw new IllegalArgumentException("Company ID es requerido para registrar usuarios");
+            }
+            company = companyRepository.findById(registerDto.getCompanyId())
+                .orElseThrow(() -> new IllegalArgumentException("Company no encontrada con ID: " + registerDto.getCompanyId()));
         } else {
-            user = new EmployeeModel(
-                registerDto.getName(),
-                registerDto.getEmail(),
-                passwordEncoder.encode(registerDto.getPassword()),
-                roleModel,
-                departmentModel
-            );
+            if (registerDto.getCompanyId() != null && !registerDto.getCompanyId().equals(tenantId)) {
+                throw new IllegalArgumentException("No puede crear usuarios en una company diferente a la suya");
+            }
+           
+            
+            company = companyRepository.findById(tenantId)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+
+            if (departmentModel.getCompany() != company) {
+                throw new IllegalArgumentException("No existe un departamento con ese ID en la company seleccionada");
+            }
+        }
+
+        user = new EmployeeModel(
+            registerDto.getName(),
+            registerDto.getEmail(),
+            passwordEncoder.encode(registerDto.getPassword()),
+            roleModel,
+            departmentModel
+        );
+        
+        if (company != null) {
+            user.setCompany(company);
         }
 
         employeeService.save(user);
