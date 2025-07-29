@@ -39,8 +39,12 @@ public class EmployeeModel {
     private RoleModel role;
     
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "department_id", nullable = false)
-    private DepartmentModel department;  
+    @JoinColumn(name = "department_id")
+    private DepartmentModel department;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "company_id")
+    private CompanyModel company;  
     
     // Getters, setters y constructores
 
@@ -53,6 +57,15 @@ public class EmployeeModel {
         this.password = password;
         this.role = role;
         this.department = department;
+        this.company = department != null ? department.getCompany() : null;
+    }
+    
+    public EmployeeModel(String name, String email, String password, RoleModel role, CompanyModel company) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.company = company;
     }
 
 
@@ -102,5 +115,13 @@ public class EmployeeModel {
 
     public void setDepartment(DepartmentModel department) {
         this.department = department;
+    }
+    
+    public CompanyModel getCompany() {
+        return company;
+    }
+
+    public void setCompany(CompanyModel company) {
+        this.company = company;
     }
 }

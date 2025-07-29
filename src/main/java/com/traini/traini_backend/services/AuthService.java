@@ -16,9 +16,12 @@ import com.traini.traini_backend.dto.auth.RegisterRequest;
 import com.traini.traini_backend.models.EmployeeModel;
 import com.traini.traini_backend.models.RoleModel;
 import com.traini.traini_backend.models.DepartmentModel;
+import com.traini.traini_backend.models.CompanyModel;
 import com.traini.traini_backend.repository.RoleRepository;
+import com.traini.traini_backend.repository.CompanyRepository;
 import com.traini.traini_backend.services.interfaces.DepartmentService;
 import com.traini.traini_backend.security.JwtUtil;
+import com.traini.traini_backend.config.TenantContext;
 
 @Service
 public class AuthService {
@@ -29,14 +32,16 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RoleRepository roleRepository;
+    private final CompanyRepository companyRepository;
 
-    public AuthService(EmployeeServiceImpl employeeService, DepartmentService departmentService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, AuthenticationManagerBuilder authenticationManagerBuilder, RoleRepository roleRepository) {
+    public AuthService(EmployeeServiceImpl employeeService, DepartmentService departmentService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, AuthenticationManagerBuilder authenticationManagerBuilder, RoleRepository roleRepository, CompanyRepository companyRepository) {
         this.employeeService = employeeService;
         this.departmentService = departmentService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.roleRepository = roleRepository;
+        this.companyRepository = companyRepository;
     }
 
     public LoginResponse authenticate(String email, String password){
@@ -69,13 +74,41 @@ public class AuthService {
             throw new IllegalArgumentException("Departamento no encontrado con ID: " + registerDto.getDepartmentId());
         }
 
-        EmployeeModel user = new EmployeeModel(
+        EmployeeModel user;
+        Long tenantId = TenantContext.getCurrentTenant();
+        CompanyModel company = null;
+        
+        if (tenantId == null) {
+            if (registerDto.getCompanyId() == null) {
+                throw new IllegalArgumentException("Company ID es requerido para registrar usuarios");
+            }
+            company = companyRepository.findById(registerDto.getCompanyId())
+                .orElseThrow(() -> new IllegalArgumentException("Company no encontrada con ID: " + registerDto.getCompanyId()));
+        } else {
+            if (registerDto.getCompanyId() != null && !registerDto.getCompanyId().equals(tenantId)) {
+                throw new IllegalArgumentException("No puede crear usuarios en una company diferente a la suya");
+            }
+           
+            
+            company = companyRepository.findById(tenantId)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+
+            if (departmentModel.getCompany() != company) {
+                throw new IllegalArgumentException("No existe un departamento con ese ID en la company seleccionada");
+            }
+        }
+
+        user = new EmployeeModel(
             registerDto.getName(),
             registerDto.getEmail(),
             passwordEncoder.encode(registerDto.getPassword()),
             roleModel,
             departmentModel
         );
+        
+        if (company != null) {
+            user.setCompany(company);
+        }
 
         employeeService.save(user);
     }

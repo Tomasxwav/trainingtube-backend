@@ -3,6 +3,7 @@ package com.traini.traini_backend.config;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,14 +14,25 @@ import com.traini.traini_backend.models.PrivilegeModel;
 import com.traini.traini_backend.models.RoleModel;
 import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.models.EmployeeModel;
+import com.traini.traini_backend.models.CompanyModel;
 import com.traini.traini_backend.repository.PrivilegeRepository;
 import com.traini.traini_backend.repository.RoleRepository;
 import com.traini.traini_backend.repository.DepartmentRepository;
 import com.traini.traini_backend.repository.EmployeeRepository;
+import com.traini.traini_backend.repository.CompanyRepository;
 
 
 @Configuration
 public class DataInitializer {
+
+    @Value("${super.admin.email}")
+    private String superAdminEmail;
+
+    @Value("${super.admin.password}")
+    private String superAdminPassword;
+
+    @Value("${super.admin.name}")
+    private String superAdminName;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -30,11 +42,15 @@ public class DataInitializer {
         PrivilegeRepository privilegeRepository,
         RoleRepository roleRepository,
         DepartmentRepository departmentRepository,
-        EmployeeRepository employeeRepository
+        EmployeeRepository employeeRepository,
+        CompanyRepository companyRepository
     ) {
         return _ -> {
-            // Inicializar departamentos primero
-            initializeDepartments(departmentRepository);
+            // Inicializar companies primero
+            initializeCompanies(companyRepository);
+            
+            // Inicializar departamentos para cada company
+            initializeDepartments(departmentRepository, companyRepository);
             
             // Verificar y crear privilegios solo si no existen
             
@@ -57,7 +73,16 @@ public class DataInitializer {
             PrivilegeModel like = createPrivilegeIfNotFound("canLike", privilegeRepository);
             PrivilegeModel favorites = createPrivilegeIfNotFound("canFavorites", privilegeRepository);
 
+            // SUPER_ADMIN PRIVILEGES
+            PrivilegeModel adminCompanies = createPrivilegeIfNotFound("canAdminCompanies", privilegeRepository);
+
             // Verificar y crear roles solo si no existen
+            createRoleIfNotFound(
+                Role.SUPER_ADMIN,
+                Set.of(adminCompanies, adminVideos, adminDepartments, adminEmployees, viewAllMetrics),
+                roleRepository
+            );
+
             createRoleIfNotFound(
                 Role.ADMIN,
                 Set.of(adminVideos, adminDepartments, adminEmployees, 
@@ -83,7 +108,7 @@ public class DataInitializer {
 
 
             // Inicializar usuarios
-            initializeUsers(employeeRepository, departmentRepository, roleRepository);
+            initializeUsers(employeeRepository, departmentRepository, roleRepository, companyRepository);
         };
     }
 
@@ -104,44 +129,125 @@ public class DataInitializer {
         }
     }
     
-    private void initializeDepartments(DepartmentRepository departmentRepository) {
-        // Crear departamentos básicos si no existen
-        createDepartmentIfNotFound("Ventas", "Departamento de Ventas", departmentRepository);
-        createDepartmentIfNotFound("Marketing", "Departamento de Marketing", departmentRepository);
-        createDepartmentIfNotFound("Desarrollo", "Departamento de Desarrollo", departmentRepository);
-        createDepartmentIfNotFound("Soporte", "Departamento de Soporte", departmentRepository);
-        createDepartmentIfNotFound("Diseño", "Departamento de Diseño", departmentRepository);
-        createDepartmentIfNotFound("Gestión", "Departamento de Gestión", departmentRepository);
-        createDepartmentIfNotFound("Otros", "Otros departamentos", departmentRepository);
-    }
-
-    private void initializeUsers(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, RoleRepository roleRepository) {
-        createUserIfNotFound("tomas@prueba.com", "admin", "Prueba123", Role.ADMIN, (long) 1, employeeRepository, departmentRepository, roleRepository);
-        createUserIfNotFound("superadmin@example.com", "superadmin", "Prueba123", Role.SUPERVISOR, (long) 1, employeeRepository, departmentRepository, roleRepository);
-        createUserIfNotFound("employee@example.com", "employee", "employee123", Role.EMPLOYEE, (long) 1, employeeRepository, departmentRepository, roleRepository);
-    }
-    
-    private void createDepartmentIfNotFound(String name, String description, DepartmentRepository departmentRepository) {
-        if (!departmentRepository.existsByName(name)) {
-            DepartmentModel department = new DepartmentModel(name, description);
-            departmentRepository.save(department);
+    private void initializeDepartments(DepartmentRepository departmentRepository, CompanyRepository companyRepository) {
+        // Obtener companies
+        CompanyModel techCorp = companyRepository.findByCompanyName("TechCorp Solutions").orElse(null);
+        CompanyModel innovate = companyRepository.findByCompanyName("Innovate Dynamics").orElse(null);
+        
+        if (techCorp != null) {
+            // Departamentos para TechCorp Solutions
+            createDepartmentIfNotFound("Ventas", "Departamento de Ventas", techCorp, departmentRepository);
+            createDepartmentIfNotFound("Marketing", "Departamento de Marketing", techCorp, departmentRepository);
+            createDepartmentIfNotFound("Desarrollo", "Departamento de Desarrollo", techCorp, departmentRepository);
+            createDepartmentIfNotFound("Soporte", "Departamento de Soporte", techCorp, departmentRepository);
+            createDepartmentIfNotFound("Finanzas", "Departamento de Finanzas", techCorp, departmentRepository);
+            createDepartmentIfNotFound("Recursos Humanos", "Departamento de Recursos Humanos", techCorp, departmentRepository);
+            createDepartmentIfNotFound("Calidad", "Departamento de Calidad", techCorp, departmentRepository);
+            createDepartmentIfNotFound("Logística", "Departamento de Logística", techCorp, departmentRepository);
+            createDepartmentIfNotFound("Administración", "Departamento de Administración", techCorp, departmentRepository);
+        }
+        
+        if (innovate != null) {
+            createDepartmentIfNotFound("Sales", "Departamento de Ventas", innovate, departmentRepository);
+            createDepartmentIfNotFound("Marketing", "Departamento de Marketing", innovate, departmentRepository);
+            createDepartmentIfNotFound("Desarrollo", "Departamento de Desarrollo", innovate, departmentRepository);
+            createDepartmentIfNotFound("Soporte", "Departamento de Soporte", innovate, departmentRepository);
+            createDepartmentIfNotFound("Finanzas", "Departamento de Finanzas", innovate, departmentRepository);
+            createDepartmentIfNotFound("Recursos Humanos", "Departamento de Recursos Humanos", innovate, departmentRepository);
+            createDepartmentIfNotFound("Calidad", "Departamento de Calidad", innovate, departmentRepository);
+            createDepartmentIfNotFound("Logística", "Departamento de Logística", innovate, departmentRepository);
+            createDepartmentIfNotFound("Administración", "Departamento de Administración", innovate, departmentRepository);
         }
     }
 
-    private void createUserIfNotFound(String email, String name, String password, Role role, Long departmentId, EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, RoleRepository roleRepository) {
+    private void initializeUsers(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, RoleRepository roleRepository, CompanyRepository companyRepository) {
+        // Super Admin (no pertenece a ninguna company)
+        createSuperAdminIfNotFound(superAdminEmail, superAdminName, superAdminPassword, Role.SUPER_ADMIN, employeeRepository, roleRepository);
+
+        // Usuarios para TechCorp Solutions
+        CompanyModel techCorp = companyRepository.findByCompanyName("TechCorp Solutions").orElse(null);
+        if (techCorp != null) {
+            DepartmentModel ventasDept = departmentRepository.findByNameAndCompany("Ventas", techCorp).orElse(null);
+            DepartmentModel desarrolloDept = departmentRepository.findByNameAndCompany("Desarrollo", techCorp).orElse(null);
+            
+            if (ventasDept != null) {
+                createUserIfNotFound("daniel@prueba.com", "Admin Daniel TechCorp", "Prueba123", Role.ADMIN, ventasDept, employeeRepository, roleRepository);
+                createUserIfNotFound("alain@prueba.com", "Alain Vendedor", "Prueba123", Role.EMPLOYEE, ventasDept, employeeRepository, roleRepository);
+            }
+            
+            if (desarrolloDept != null) {
+                createUserIfNotFound("david@prueba.com", "David Supervisor", "Prueba123", Role.SUPERVISOR, desarrolloDept, employeeRepository, roleRepository);
+                createUserIfNotFound("javi@prueba.com", "Javi Desarrollador", "Prueba123", Role.EMPLOYEE, desarrolloDept, employeeRepository, roleRepository);
+            }
+        }
+        
+        // Usuarios para Innovate Dynamics
+        CompanyModel innovate = companyRepository.findByCompanyName("Innovate Dynamics").orElse(null);
+        if (innovate != null) {
+            DepartmentModel ventasDept = departmentRepository.findByNameAndCompany("Sales", innovate).orElse(null);
+            DepartmentModel soporteDept = departmentRepository.findByNameAndCompany("Soporte", innovate).orElse(null);
+            
+            if (ventasDept != null) {
+                createUserIfNotFound("amanda@prueba.com", "Admin Amanda Innovate", "Prueba123", Role.ADMIN, ventasDept, employeeRepository, roleRepository);
+                createUserIfNotFound("fer@prueba.com", "Fer Vendedor", "Prueba123", Role.EMPLOYEE, ventasDept, employeeRepository, roleRepository);
+            }
+            
+            if (soporteDept != null) {
+                createUserIfNotFound("juan@prueba.com", "Juan Supervisor", "Prueba123", Role.SUPERVISOR, soporteDept, employeeRepository, roleRepository);
+                createUserIfNotFound("liz@prueba.com", "Liz Gerente", "Prueba123", Role.EMPLOYEE, soporteDept, employeeRepository, roleRepository);
+            }
+        }
+    }
+    
+    private void initializeCompanies(CompanyRepository companyRepository) {
+        createCompanyIfNotFound("TechCorp Solutions", "Empresa líder en soluciones tecnológicas", 
+                "Calle Principal 123, Ciudad Tech", "+1234567890", "contact@techcorp.com", companyRepository);
+        createCompanyIfNotFound("Innovate Dynamics", "Empresa especializada en innovación y desarrollo", 
+                "Avenida Innovación 456, Centro Empresarial", "+0987654321", "info@innovate.com", companyRepository);
+    }
+    
+    private void createCompanyIfNotFound(String companyName, String description, String address, String phone, String email, CompanyRepository companyRepository) {
+        if (!companyRepository.existsByCompanyName(companyName)) {
+            CompanyModel company = new CompanyModel(companyName, address, phone, email);
+            companyRepository.save(company);
+        }
+    }
+    
+    private void createDepartmentIfNotFound(String name, String description, CompanyModel company, DepartmentRepository departmentRepository) {
+        if (!departmentRepository.existsByNameAndCompany(name, company)) {
+            DepartmentModel department = new DepartmentModel(name, description, company);
+            departmentRepository.save(department);
+        }
+    }
+    
+    private void createSuperAdminIfNotFound(String email, String name, String password, Role role, EmployeeRepository employeeRepository, RoleRepository roleRepository) {
         if (!employeeRepository.existsByEmail(email)) {
             RoleModel roleModel = roleRepository.findByName(role)
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + role));
-            
-            DepartmentModel departmentModel = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new RuntimeException("Departamento no encontrado con ID: " + departmentId));
             
             EmployeeModel employee = new EmployeeModel(
                 name,
                 email,
                 passwordEncoder.encode(password),
                 roleModel,
-                departmentModel
+                (CompanyModel) null  // Super Admin no pertenece a ninguna company
+            );
+            
+            employeeRepository.save(employee);
+        }
+    }
+    
+    private void createUserIfNotFound(String email, String name, String password, Role role, DepartmentModel department, EmployeeRepository employeeRepository, RoleRepository roleRepository) {
+        if (!employeeRepository.existsByEmail(email)) {
+            RoleModel roleModel = roleRepository.findByName(role)
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + role));
+            
+            EmployeeModel employee = new EmployeeModel(
+                name,
+                email,
+                passwordEncoder.encode(password),
+                roleModel,
+                department
             );
             
             employeeRepository.save(employee);

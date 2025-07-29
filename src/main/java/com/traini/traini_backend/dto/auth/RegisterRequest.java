@@ -12,6 +12,8 @@ public class RegisterRequest {
     private Role role;
     @JsonProperty("department_id")
     private Long departmentId;
+    @JsonProperty("company_id")
+    private Long companyId;
 
     
     public String getName() {
@@ -52,5 +54,13 @@ public class RegisterRequest {
 
     public void setDepartmentId(Long departmentId) {
         this.departmentId = departmentId;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 }
