@@ -3,6 +3,7 @@ package com.traini.traini_backend.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.traini.traini_backend.dto.employee.UpdateEmployeeDto;
 import com.traini.traini_backend.models.EmployeeModel;
 import com.traini.traini_backend.services.interfaces.EmployeeService;
 
@@ -49,9 +50,13 @@ public class EmployeeController {
     }
 
     @PutMapping("/{employeeId}")
-    public ResponseEntity<?> putEmployee(@PathVariable String employeeId, @RequestBody EmployeeModel employee) {
-        EmployeeModel updatedEmployee = employeeService.update(Long.parseLong(employeeId), employee);
-        return ResponseEntity.ok(updatedEmployee);
+    public ResponseEntity<?> putEmployee(@PathVariable String employeeId, @RequestBody UpdateEmployeeDto updateRequest) {
+        try {
+            EmployeeModel updatedEmployee = employeeService.update(Long.parseLong(employeeId), updateRequest);
+            return ResponseEntity.ok(updatedEmployee);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{employeeId}")
@@ -90,12 +95,12 @@ public class EmployeeController {
     }
 
     @PutMapping("/department/{employeeId}")
-    public ResponseEntity<?> putDepartmentEmployee(@PathVariable String employeeId, @RequestBody EmployeeModel employee, Authentication authentication) {
+    public ResponseEntity<?> putDepartmentEmployee(@PathVariable String employeeId, @RequestBody UpdateEmployeeDto updateRequest, Authentication authentication) {
         try {
-            EmployeeModel updatedEmployee = employeeService.updateAsSupervisor(Long.parseLong(employeeId), employee, authentication);
+            EmployeeModel updatedEmployee = employeeService.updateAsSupervisor(Long.parseLong(employeeId), updateRequest, authentication);
             return ResponseEntity.ok(updatedEmployee);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
 

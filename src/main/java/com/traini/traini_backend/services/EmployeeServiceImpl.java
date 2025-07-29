@@ -2,6 +2,7 @@ package com.traini.traini_backend.services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -10,15 +11,20 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.traini.traini_backend.dto.employee.UpdateEmployeeDto;
+import com.traini.traini_backend.enums.Role;
 import com.traini.traini_backend.models.EmployeeModel;
 import com.traini.traini_backend.models.InteractionModel;
+import com.traini.traini_backend.models.RoleModel;
 import com.traini.traini_backend.models.VideoModel;
 import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.models.CompanyModel;
 import com.traini.traini_backend.repository.EmployeeRepository;
 import com.traini.traini_backend.repository.InteractionRepository;
+import com.traini.traini_backend.repository.RoleRepository;
 import com.traini.traini_backend.repository.VideoRepository;
 import com.traini.traini_backend.repository.CompanyRepository;
+import com.traini.traini_backend.repository.DepartmentRepository;
 import com.traini.traini_backend.services.interfaces.EmployeeService;
 import com.traini.traini_backend.config.TenantContext;
 
@@ -32,10 +38,16 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
     private VideoRepository videoRepository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private InteractionRepository interactionRepository;
     
     @Autowired
     private CompanyRepository companyRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -91,14 +103,34 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
         return savedEmployee;
     }
 
+
     @Override
-    public EmployeeModel update(Long id, EmployeeModel employee) {
+    public EmployeeModel update(Long id, UpdateEmployeeDto updateRequest) {
         EmployeeModel employeeFound = findById(id);
 
-        if( employee.getName() != null ) employeeFound.setName(employee.getName());
-        if( employee.getEmail() != null ) employeeFound.setEmail(employee.getEmail());
-        if( employee.getPassword() != null ) employeeFound.setPassword(employee.getPassword());
-        if( employee.getRole() != null ) employeeFound.setRole(employee.getRole());
+        if (updateRequest.getName() != null) {
+            employeeFound.setName(updateRequest.getName());
+        }
+        if (updateRequest.getEmail() != null) {
+            employeeFound.setEmail(updateRequest.getEmail());
+        }
+        if (updateRequest.getPassword() != null) {
+            employeeFound.setPassword(updateRequest.getPassword());
+        }
+        if (updateRequest.getRole() != null) {
+            Role roleEnum = updateRequest.getRoleEnum();
+            Optional<RoleModel> roleModel = roleRepository.findByName(roleEnum);
+            if (roleModel.isPresent()) {
+                employeeFound.setRole(roleModel.get());
+            } else {
+                throw new RuntimeException("Role not found: " + updateRequest.getRole());
+            }
+        }
+        if (updateRequest.getDepartmentId() != null) {
+            DepartmentModel department = departmentRepository.findById(updateRequest.getDepartmentId())
+                .orElseThrow(() -> new RuntimeException("Department not found with id: " + updateRequest.getDepartmentId()));
+            employeeFound.setDepartment(department);
+        }
 
         return employeeRepository.save(employeeFound);
     }
@@ -137,8 +169,9 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
         return savedEmployee;
     }
 
+    
     @Override
-    public EmployeeModel updateAsSupervisor(Long id, EmployeeModel employee, Authentication authentication) {
+    public EmployeeModel updateAsSupervisor(Long id, UpdateEmployeeDto updateRequest, Authentication authentication) {
         String email = authentication.getName();
         EmployeeModel supervisor = employeeRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("Supervisor no encontrado con email: " + email));
@@ -149,14 +182,33 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
             throw new RuntimeException("No tienes permisos para actualizar este empleado. Solo puedes actualizar empleados de tu propio departamento.");
         }
         
-        if (employee.getDepartment() != null && !employee.getDepartment().getId().equals(supervisor.getDepartment().getId())) {
+        if (updateRequest.getDepartmentId() != null && !updateRequest.getDepartmentId().equals(supervisor.getDepartment().getId())) {
             throw new RuntimeException("No puedes transferir empleados a otro departamento. Solo puedes mantener empleados en tu propio departamento.");
         }
 
-        if( employee.getName() != null ) employeeFound.setName(employee.getName());
-        if( employee.getEmail() != null ) employeeFound.setEmail(employee.getEmail());
-        if( employee.getPassword() != null ) employeeFound.setPassword(employee.getPassword());
-        if( employee.getRole() != null ) employeeFound.setRole(employee.getRole());
+        if (updateRequest.getName() != null) {
+            employeeFound.setName(updateRequest.getName());
+        }
+        if (updateRequest.getEmail() != null) {
+            employeeFound.setEmail(updateRequest.getEmail());
+        }
+        if (updateRequest.getPassword() != null) {
+            employeeFound.setPassword(updateRequest.getPassword());
+        }
+        if (updateRequest.getRole() != null) {
+            Role roleEnum = updateRequest.getRoleEnum();
+            Optional<RoleModel> roleModel = roleRepository.findByName(roleEnum);
+            if (roleModel.isPresent()) {
+                employeeFound.setRole(roleModel.get());
+            } else {
+                throw new RuntimeException("Role not found: " + updateRequest.getRole());
+            }
+        }
+        if (updateRequest.getDepartmentId() != null) {
+            DepartmentModel department = departmentRepository.findById(updateRequest.getDepartmentId())
+                .orElseThrow(() -> new RuntimeException("Department not found with id: " + updateRequest.getDepartmentId()));
+            employeeFound.setDepartment(department);
+        }
 
         return employeeRepository.save(employeeFound);
     }

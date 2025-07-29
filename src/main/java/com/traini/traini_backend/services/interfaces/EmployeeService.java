@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.security.core.Authentication;
 
+import com.traini.traini_backend.dto.employee.UpdateEmployeeDto;
 import com.traini.traini_backend.models.EmployeeModel;
 
 public interface EmployeeService {
@@ -11,8 +12,8 @@ public interface EmployeeService {
     EmployeeModel findById(Long id);
     EmployeeModel save(EmployeeModel employee);
     EmployeeModel saveAsSupervisor(EmployeeModel employee, Authentication authentication);
-    EmployeeModel update(Long id, EmployeeModel employee);
-    EmployeeModel updateAsSupervisor(Long id, EmployeeModel employee, Authentication authentication);
+    EmployeeModel update(Long id, UpdateEmployeeDto updateRequest);
+    EmployeeModel updateAsSupervisor(Long id, UpdateEmployeeDto updateRequest, Authentication authentication);
     EmployeeModel delete(Long id);
     EmployeeModel deleteAsSupervisor(Long id, Authentication authentication);
     boolean existsByEmail(String email);
