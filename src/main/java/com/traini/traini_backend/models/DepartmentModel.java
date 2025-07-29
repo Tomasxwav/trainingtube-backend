@@ -3,6 +3,8 @@ package com.traini.traini_backend.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+
+import java.time.LocalDateTime;
 import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -24,6 +26,9 @@ public class DepartmentModel {
     
     @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean active = true;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
     
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_id", nullable = false)
@@ -59,6 +64,11 @@ public class DepartmentModel {
         this.company = company;
         this.active = true;
     }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
     
     public Long getId() {
         return id;
@@ -90,6 +100,14 @@ public class DepartmentModel {
     
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
     
     public Set<EmployeeModel> getEmployees() {
