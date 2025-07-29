@@ -122,7 +122,9 @@ public class CommentsServiceImpl implements CommentsService {
             .orElseThrow(() -> new RuntimeException("Employee not found with email: " + email));
         
         comment.setEmployeeId(employee.getId());
-        
+        comment.setEmployeeName(employee.getName());
+        comment.setEmployeeDepartment(employee.getDepartment().getName());
+
         if (comment.getId() == null) {
             comment.setCreatedAt(LocalDateTime.now());
         } else {

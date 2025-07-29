@@ -20,6 +20,12 @@ public class CommentsModel {
     @Column(name = "employee_id")
     private Long employeeId;
 
+    @Column(name = "employee_name")
+    private String employeeName;
+
+    @Column(name = "employee_department")
+    private String employeeDepartment;
+
     @Column(name = "video_id")
     private Long videoId;
 
@@ -38,16 +44,20 @@ public class CommentsModel {
     public CommentsModel() {
     }
 
-    public CommentsModel(String commentText, Long employeeId, Long videoId) {
+    public CommentsModel(String commentText, Long employeeId, String employeeName, String employeeDepartment, Long videoId) {
         this.commentText = commentText;
         this.employeeId = employeeId;
+        this.employeeName = employeeName;
+        this.employeeDepartment = employeeDepartment;
         this.videoId = videoId;
         this.isDeleted = false;
     }
 
-    public CommentsModel(String commentText, Long employeeId, Long videoId, Long parentCommentId) {
+    public CommentsModel(String commentText, Long employeeId, String employeeName, String employeeDepartment, Long videoId, Long parentCommentId) {
         this.commentText = commentText;
         this.employeeId = employeeId;
+        this.employeeName = employeeName;
+        this.employeeDepartment = employeeDepartment;
         this.videoId = videoId;
         this.parentCommentId = parentCommentId;
         this.isDeleted = false;
@@ -89,6 +99,22 @@ public class CommentsModel {
 
     public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+    }
+
+    public String getEmployeeDepartment() {
+        return employeeDepartment;
+    }
+
+    public void setEmployeeDepartment(String employeeDepartment) {
+        this.employeeDepartment = employeeDepartment;
     }
 
     public Long getVideoId() {

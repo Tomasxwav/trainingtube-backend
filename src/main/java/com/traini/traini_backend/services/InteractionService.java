@@ -12,6 +12,7 @@ import com.traini.traini_backend.models.VideoModel;
 import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.repository.EmployeeRepository;
 import com.traini.traini_backend.repository.InteractionRepository;
+import com.traini.traini_backend.repository.VideoRepository;
 import com.traini.traini_backend.dto.UpdateInteractionDto;
 
 @Service
@@ -21,6 +22,9 @@ public class InteractionService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private VideoRepository videoRepository;
 
     // Guardar o actualizar una interacción
     public InteractionModel saveInteraction(InteractionModel interaction) {
@@ -139,6 +143,11 @@ public class InteractionService {
        
        if (updateDto.getIsPending() != null) {
            existingInteraction.setPending(updateDto.getIsPending());
+            if (updateDto.getIsPending() == false) {
+               VideoModel video = videoRepository.findById(existingInteraction.getVideoId()).get();
+               video.setViews(video.getViews() + 1);
+               videoRepository.save(video);
+           }
        }
        
        if (updateDto.getIsWatched() != null) {
