@@ -14,6 +14,6 @@ public interface VideoService {
     List<VideoModel> findAll(Authentication authentication);
     
     void deleteVideo(Long videoId, Authentication authentication) throws Exception;
-    void updateVideo(Long videoId, UpdateVideoDto updateRequest) throws Exception;
+    void updateVideo(Long videoId, UpdateVideoDto updateRequest, Authentication authentication) throws Exception;
 
 }

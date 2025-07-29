@@ -193,10 +193,33 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public void updateVideo(Long videoId, UpdateVideoDto updateRequest) throws Exception {
+    public void updateVideo(Long videoId, UpdateVideoDto updateRequest, Authentication authentication) throws Exception {
+        String email = authentication.getName();
+        Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(email);
+        
+        if (!employeeOpt.isPresent()) {
+            throw new Exception("Usuario no encontrado");
+        }
+        
+        EmployeeModel employee = employeeOpt.get();
+        Role userRole = employee.getRole().getName();
+        
         VideoModel video = videoRepository.findById(videoId)
-            .orElseThrow(() -> new RuntimeException("Video not found with id: " + videoId));
-
+            .orElseThrow(() -> new Exception("Video no encontrado"));
+        
+        if (userRole.equals(Role.SUPERVISOR)) {
+            if (!video.getDepartment().getId().equals(employee.getDepartment().getId())) {
+                throw new Exception("No tienes permisos para actualizar este video. Los supervisores solo pueden actualizar videos de su departamento.");
+            }
+        }
+        
+        if (!userRole.equals(Role.SUPER_ADMIN)) {
+            Long tenantId = TenantContext.getCurrentTenant();
+            if (tenantId != null && !video.getDepartment().getCompany().getId().equals(tenantId)) {
+                throw new Exception("No tienes permisos para actualizar este video.");
+            }
+        }
+        
         if (updateRequest.getTitle() != null) {
             video.setTitle(updateRequest.getTitle());
         }
@@ -204,9 +227,23 @@ public class VideoServiceImpl implements VideoService {
             video.setDescription(updateRequest.getDescription());
         }
         if (updateRequest.getDepartmentId() != null) {
-            DepartmentModel department = departmentRepository.findById(updateRequest.getDepartmentId())
-                .orElseThrow(() -> new RuntimeException("Department not found with id: " + updateRequest.getDepartmentId()));
-            video.setDepartment(department);
+            DepartmentModel newDepartment = departmentRepository.findById(updateRequest.getDepartmentId())
+                .orElseThrow(() -> new Exception("Department not found with id: " + updateRequest.getDepartmentId()));
+            
+            if (userRole.equals(Role.SUPERVISOR)) {
+                if (!newDepartment.getId().equals(employee.getDepartment().getId())) {
+                    throw new Exception("No tienes permisos para mover este video a otro departamento. Los supervisores solo pueden mover videos dentro de su propio departamento.");
+                }
+            }
+            
+            if (!userRole.equals(Role.SUPER_ADMIN)) {
+                Long tenantId = TenantContext.getCurrentTenant();
+                if (tenantId != null && !newDepartment.getCompany().getId().equals(tenantId)) {
+                    throw new Exception("No tienes permisos para mover este video a este departamento.");
+                }
+            }
+            
+            video.setDepartment(newDepartment);
         }
 
         videoRepository.save(video);

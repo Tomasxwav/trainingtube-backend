@@ -78,9 +78,9 @@ public class VideoController {
     }
 
     @PutMapping("/admin/{videoid}")
-    public ResponseEntity<?> updateVideo(@PathVariable Long videoid, @RequestBody UpdateVideoDto updateRequest) {
+    public ResponseEntity<?> updateVideo(@PathVariable Long videoid, @RequestBody UpdateVideoDto updateRequest, Authentication authentication) {
         try {
-            videoService.updateVideo(videoid, updateRequest);
+            videoService.updateVideo(videoid, updateRequest, authentication);
             return ResponseEntity.ok("Video actualizado exitosamente");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
