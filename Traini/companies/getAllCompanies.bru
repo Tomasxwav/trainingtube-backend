@@ -1,0 +1,16 @@
+meta {
+  name: Get All Companies
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/companies
+  body: none
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{access_token}}
+}

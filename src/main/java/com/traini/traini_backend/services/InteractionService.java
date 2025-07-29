@@ -12,6 +12,7 @@ import com.traini.traini_backend.models.VideoModel;
 import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.repository.EmployeeRepository;
 import com.traini.traini_backend.repository.InteractionRepository;
+import com.traini.traini_backend.dto.UpdateInteractionDto;
 
 @Service
 public class InteractionService {
@@ -85,7 +86,7 @@ public class InteractionService {
             interaction.setId(employeeId);
             interaction.setVideoId(id);
         }
-        interaction.setPending(!interaction.isPending());
+        interaction.setPending(false);
         return repository.save(interaction);
     }
 
@@ -109,4 +110,47 @@ public class InteractionService {
         Long employeeId = employeeRepository.findByEmail(email).get().getId();
         return repository.findByEmployeeId(employeeId);
     }
+
+    // Obtener las interacciones del empleado para un video específico
+    public InteractionModel getVideoEmployeeInteractions(Long id, Authentication authentication) {
+        String email = authentication.getName();
+        Long employeeId = employeeRepository.findByEmail(email).get().getId();
+        return repository.findByEmployeeIdAndVideoId(employeeId, id);
+
+    }
+    
+    // Actualizar interación del empleado con un video específico
+   public InteractionModel updateVideoEmployeeInteraction(Long id, UpdateInteractionDto updateDto, Authentication authentication) {
+       String email = authentication.getName();
+       Long employeeId = employeeRepository.findByEmail(email).get().getId();
+       InteractionModel existingInteraction = repository.findByEmployeeIdAndVideoId(employeeId, id);
+       
+       if (existingInteraction == null) {
+           throw new RuntimeException("No existe una interacción entre el empleado y el video con ID: " + id);
+       }
+       
+       if (updateDto.getProgress() != null) {
+           existingInteraction.setProgress(updateDto.getProgress());
+       }
+       
+       if (updateDto.getIsFavorite() != null) {
+           existingInteraction.setFavorite(updateDto.getIsFavorite());
+       }
+       
+       if (updateDto.getIsPending() != null) {
+           existingInteraction.setPending(updateDto.getIsPending());
+       }
+       
+       if (updateDto.getIsWatched() != null) {
+           existingInteraction.setWatched(updateDto.getIsWatched());
+       }
+       
+       if (updateDto.getLastInteractionDate() != null) {
+           existingInteraction.setLastInteractionDate(updateDto.getLastInteractionDate());
+       } else {
+           existingInteraction.setLastInteractionDate(new Date());
+       }
+
+       return repository.save(existingInteraction);
+   }
 }

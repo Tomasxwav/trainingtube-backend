@@ -1,0 +1,21 @@
+meta {
+  name: Interactions 2
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{url}}/interactions
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b21hc0BwcnVlYmEuY29tIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiIsImNhbkFkbWluRGVwYXJ0bWVudHMiLCJjYW5BZG1pbkVtcGxveWVlcyIsImNhbkFkbWluVmlkZW9zIiwiY2FuQ29tbWVudCIsImNhbkZhdm9yaXRlcyIsImNhbkxpa2UiLCJjYW5WaWV3QWxsTWV0cmljcyIsImNhblZpZXdNeUludGVyYWN0aW9ucyIsImNhblZpZXdNeU1ldHJpY3MiXSwiaWF0IjoxNzUzMzQwMjU0LCJleHAiOjE3NTM0MjY2NTR9.ZI9fcEwK9pzlIruNiPnEHx1Jw285ZPldyn4FKQpaSfWVv0cD9u-H_K6Ekrn25sBwcLpzccUwjJTbqo8NLc9sRQ
+}
+
+body:json {
+  {
+    "pending": false
+  }
+}

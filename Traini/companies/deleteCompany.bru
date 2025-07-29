@@ -1,0 +1,16 @@
+meta {
+  name: Delete Company
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{base_url}}/companies/3
+  body: none
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{access_token}}
+}

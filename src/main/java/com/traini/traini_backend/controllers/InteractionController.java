@@ -10,9 +10,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.traini.traini_backend.dto.UpdateInteractionDto;
+import com.traini.traini_backend.models.InteractionModel;
 import com.traini.traini_backend.models.VideoModel;
 import com.traini.traini_backend.services.InteractionService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
@@ -48,10 +52,16 @@ public class InteractionController {
         return ResponseEntity.ok("TODO");
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getVideoEmployeeInteractions(@PathVariable Long id, Authentication authentication) {
+        InteractionModel interaction = service.getVideoEmployeeInteractions(id, authentication);
+        return ResponseEntity.ok(interaction);
+    }
+
     @PostMapping("/favorites/{id}")
     public ResponseEntity<String> toggleFavoriteVideo(@PathVariable Long id, Authentication authentication) {
         service.toggleFavorite(id, authentication);
-        return ResponseEntity.ok("OK");
+        return ResponseEntity.ok("Video favorite status updated successfully");
     }
 
     @PostMapping("/likes/{id}")
@@ -63,7 +73,13 @@ public class InteractionController {
     @PostMapping("/pending/{id}")
     public ResponseEntity<String> togglePendingVideo(@PathVariable Long id, Authentication authentication) {
         service.togglePending(id, authentication);
-        return ResponseEntity.ok("TODO");
+        return ResponseEntity.ok("Video pending status updated successfully");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateVideoEmployeeInteraction(@PathVariable Long id, @RequestBody UpdateInteractionDto updateDto, Authentication authentication) {
+        service.updateVideoEmployeeInteraction(id, updateDto, authentication);
+        return ResponseEntity.ok("Video employee interaction updated successfully");
     }
     
 }

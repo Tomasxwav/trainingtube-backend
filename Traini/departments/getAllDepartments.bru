@@ -7,9 +7,13 @@ meta {
 get {
   url: {{url}}/departments
   body: none
-  auth: none
+  auth: bearer
 }
 
 headers {
   Authorization: Bearer {{ACCESS_TOKEN}}
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b21hc0BwcnVlYmEuY29tIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiIsImNhbkFkbWluRGVwYXJ0bWVudHMiLCJjYW5BZG1pbkVtcGxveWVlcyIsImNhbkFkbWluVmlkZW9zIiwiY2FuQ29tbWVudCIsImNhbkZhdm9yaXRlcyIsImNhbkxpa2UiLCJjYW5WaWV3QWxsTWV0cmljcyIsImNhblZpZXdNeUludGVyYWN0aW9ucyIsImNhblZpZXdNeU1ldHJpY3MiXSwiaWF0IjoxNzUzMTI5NTU1LCJleHAiOjE3NTMxMjk4NTV9.7i04mPy7uajGs2k4YNz8N8KIiWN69bSiNtSfznG2p_otDzT0wbBrPbk2Q1Z46ZliACrPFMKGXR-rf_gtFDaV9g
 }

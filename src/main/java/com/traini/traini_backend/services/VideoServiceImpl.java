@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +16,7 @@ import com.traini.traini_backend.repository.EmployeeRepository;
 import com.traini.traini_backend.repository.InteractionRepository;
 import com.traini.traini_backend.repository.VideoRepository;
 import com.traini.traini_backend.services.interfaces.VideoService;
+import com.traini.traini_backend.config.TenantContext;
 
 @Service
 public class VideoServiceImpl implements VideoService {
@@ -35,8 +35,8 @@ public class VideoServiceImpl implements VideoService {
   
 
     @Override
-    public String uploadAndSaveVideo(MultipartFile video, MultipartFile thumbnail, String title, String description, DepartmentModel department) throws Exception {
-        String videoUrl = firebaseStorageService.uploadVideo(video);
+    public String uploadAndSaveVideo(MultipartFile videoFile, MultipartFile thumbnail, String title, String description, DepartmentModel department, Long duration) throws Exception {
+        String videoUrl = firebaseStorageService.uploadVideo(videoFile);
         String thumbnailUrl = firebaseStorageService.uploadThumbnail(thumbnail);
 
         // 2. Guardar metadatos en la base de datos
@@ -47,6 +47,8 @@ public class VideoServiceImpl implements VideoService {
         video.setUploadDate(new Date());
         video.setThumbnailUrl(thumbnailUrl);
         video.setDepartment(department);
+        video.setDuration(duration);
+        video.setViews((long) 0);
 
         VideoModel savedVideo = videoRepository.save(video);
 
@@ -75,6 +77,10 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public List<VideoModel> findAll() {
+        Long tenantId = TenantContext.getCurrentTenant();
+        if (tenantId != null) {
+            return videoRepository.findByCompanyId(tenantId);
+        }
         return (List<VideoModel>) videoRepository.findAll();
     }
 

@@ -21,6 +21,11 @@ public class SecurityConfig {
     public JwtAuthentificationFilter jwtTokenFilter(){
         return new JwtAuthentificationFilter();
     }
+    
+    @Bean
+    public TenantFilter tenantFilter(){
+        return new TenantFilter();
+    }
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -29,10 +34,13 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
             .requestMatchers(
-                "/auth/register", 
                 "/auth/login", 
                 "/auth/refresh-token")
                 .permitAll()
+
+                // Permisos exclusivos para Super Admin
+                .requestMatchers("/companies/**")
+                .hasRole("SUPER_ADMIN")
 
                 // Permisos para Administrador
                 .requestMatchers(
@@ -40,32 +48,38 @@ public class SecurityConfig {
                 "/supervisors/**",
                 "/videos/admin",
                 "/metrics/**"
-                ).hasRole("ADMIN")
+                ).hasAnyRole("SUPER_ADMIN", "ADMIN")
                 
-                // Permisos para Supervisor
+                // Permisos solo para Supervisor
                 .requestMatchers(
-                    "/employees/department",
-                    "/videos/department",
-                    "/metrics/department"
-                ).hasRole("SUPERVISOR")
+                "/employees/department",
+                "/metrics/department"
+                ).hasAnyRole("SUPER_ADMIN", "SUPERVISOR")
                 
-                // Permisos para Empleado
+                // Permisos para Supervisor y Empleado
                 .requestMatchers(
-                    "/videos/department",
-                    "/metrics/info/**"
-                ).hasRole("EMPLOYEE")
-                
+                "/metrics/info/**"
+                ).hasAnyRole("SUPER_ADMIN", "SUPERVISOR", "EMPLOYEE")
+
+                // Permisos para Supervisor y Administrador
+                .requestMatchers(
+                "/auth/register"
+                ).hasAnyRole("SUPER_ADMIN", "ADMIN", "SUPERVISOR")
+
                 // Permisos generales (todos los roles autenticados)
                 .requestMatchers(
-                    "/interactions/favorites/**", 
-                    "/interactions/likes/**", 
-                    "/interactions/pending/**"
+                "/interactions/favorites/**", 
+                "/interactions/likes/**", 
+                "/videos/department",
+                "/interactions/pending/**",
+                "/comments/**"
                 ).authenticated()
 
                 .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
             .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint()))
-            .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(tenantFilter(), JwtAuthentificationFilter.class);
         return http.build();
     }
 

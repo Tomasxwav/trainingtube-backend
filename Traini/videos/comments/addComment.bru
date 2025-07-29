@@ -1,0 +1,25 @@
+meta {
+  name: addComment
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{url}}/comments/1
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b21hc0BwcnVlYmEuY29tIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiIsImNhbkFkbWluRGVwYXJ0bWVudHMiLCJjYW5BZG1pbkVtcGxveWVlcyIsImNhbkFkbWluVmlkZW9zIiwiY2FuQ29tbWVudCIsImNhbkZhdm9yaXRlcyIsImNhbkxpa2UiLCJjYW5WaWV3QWxsTWV0cmljcyIsImNhblZpZXdNeUludGVyYWN0aW9ucyIsImNhblZpZXdNeU1ldHJpY3MiXSwiaWF0IjoxNzUzNDE3MzM1LCJleHAiOjE3NTM1MDM3MzV9.sR9QBKiTBkK_ItZ6eFhl44EHdGuNgoLgR3zBcOmRrRSQDXZteKcDFW_GvnCbZMxfiZ2W7P80V46rw6urOyP0fw
+}
+
+body:json {
+  {
+    "comment_text": "popo caca"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

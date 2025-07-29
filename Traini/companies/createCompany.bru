@@ -1,0 +1,26 @@
+meta {
+  name: Create Company
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/companies
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{access_token}}
+}
+
+body:json {
+  {
+    "companyName": "Nueva Empresa Test",
+    "address": "Dirección de prueba 123",
+    "phone": "+123456789",
+    "email": "test@nuevaempresa.com",
+    "active": true
+  }
+}
