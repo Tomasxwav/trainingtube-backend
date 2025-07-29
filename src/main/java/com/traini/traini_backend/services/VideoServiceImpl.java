@@ -2,12 +2,15 @@ package com.traini.traini_backend.services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.traini.traini_backend.enums.Role;
 import com.traini.traini_backend.models.DepartmentModel;
 import com.traini.traini_backend.models.EmployeeModel;
 import com.traini.traini_backend.models.InteractionModel;
@@ -96,5 +99,107 @@ public class VideoServiceImpl implements VideoService {
         Long employeeId = employeeRepository.findByEmail(email).get().getId();
         DepartmentModel department = employeeRepository.findDepartmentById(employeeId);
         return videoRepository.countByDepartment(department);
+    }
+
+    @Override
+    @Transactional
+    public void deleteVideoAsSupervisor(Long videoId, Authentication authentication) throws Exception {
+        String email = authentication.getName();
+        Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(email);
+        
+        if (!employeeOpt.isPresent()) {
+            throw new Exception("Usuario no encontrado");
+        }
+        
+        EmployeeModel employee = employeeOpt.get();
+        
+        if (!employee.getRole().getName().equals(Role.SUPERVISOR)) {
+            throw new Exception("No tienes permisos para eliminar videos. Solo los supervisores pueden eliminar videos de su departamento.");
+        }
+        
+        Optional<VideoModel> videoOpt = videoRepository.findById(videoId);
+        if (!videoOpt.isPresent()) {
+            throw new Exception("Video no encontrado");
+        }
+        
+        VideoModel video = videoOpt.get();
+        
+        if (!video.getDepartment().getId().equals(employee.getDepartment().getId())) {
+            throw new Exception("No tienes permisos para eliminar este video. Solo puedes eliminar videos de tu departamento.");
+        }
+        
+        Long tenantId = TenantContext.getCurrentTenant();
+        if (tenantId != null && !video.getDepartment().getCompany().getId().equals(tenantId)) {
+            throw new Exception("No tienes permisos para eliminar este video.");
+        }
+        
+        // Eliminar primero las interacciones relacionadas con el video
+        interactionRepository.deleteByVideoId(videoId);
+        
+        try {
+            if (video.getVideoUrl() != null) {
+                firebaseStorageService.deleteVideo(video.getVideoUrl());
+            }
+            if (video.getThumbnailUrl() != null) {
+                firebaseStorageService.deleteThumbnail(video.getThumbnailUrl());
+            }
+        } catch (Exception e) {
+            System.err.println("Error eliminando archivos de Firebase: " + e.getMessage());
+        }
+        
+        videoRepository.delete(video);
+    }
+
+    @Override
+    @Transactional
+    public void deleteVideoAsAdmin(Long videoId, Authentication authentication) throws Exception {
+        String email = authentication.getName();
+        Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(email);
+        
+        if (!employeeOpt.isPresent()) {
+            throw new Exception("Usuario no encontrado");
+        }
+        
+        EmployeeModel employee = employeeOpt.get();
+        
+        Role userRole = employee.getRole().getName();
+        if (!userRole.equals(Role.ADMIN) && !userRole.equals(Role.SUPER_ADMIN)) {
+            throw new Exception("No tienes permisos para eliminar videos. Solo los administradores pueden eliminar cualquier video.");
+        }
+        
+        Optional<VideoModel> videoOpt = videoRepository.findById(videoId);
+        if (!videoOpt.isPresent()) {
+            throw new Exception("Video no encontrado");
+        }
+        
+        VideoModel video = videoOpt.get();
+        
+        if (userRole.equals(Role.ADMIN)) {
+            Long tenantId = TenantContext.getCurrentTenant();
+            if (tenantId != null && !video.getDepartment().getCompany().getId().equals(tenantId)) {
+                throw new Exception("No tienes permisos para eliminar este video.");
+            }
+        }
+        
+        interactionRepository.deleteByVideoId(videoId);
+        
+        try {
+            if (video.getVideoUrl() != null) {
+                firebaseStorageService.deleteVideo(video.getVideoUrl());
+            }
+            if (video.getThumbnailUrl() != null) {
+                firebaseStorageService.deleteThumbnail(video.getThumbnailUrl());
+            }
+        } catch (Exception e) {
+            System.err.println("Error eliminando archivos de Firebase: " + e.getMessage());
+        }
+        
+        // Eliminar el video de la base de datos
+        videoRepository.delete(video);
+    }
+
+    @Override
+    public void deleteDepartmentVideos(Long videoid, Authentication authentication) {
+     
     }
 }
