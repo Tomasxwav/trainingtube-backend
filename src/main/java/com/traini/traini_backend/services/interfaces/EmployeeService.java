@@ -10,4 +10,6 @@ public interface EmployeeService {
     EmployeeModel save(EmployeeModel employee);
     EmployeeModel update(Long id, EmployeeModel employee);
     EmployeeModel delete(Long id);
+    boolean existsByEmail(String email);
+    EmployeeModel getUserByEmail(String email);
 }

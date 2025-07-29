@@ -117,4 +117,9 @@ public class EmployeeServiceImpl implements UserDetailsService, EmployeeService 
         });
     }
 
+    public EmployeeModel getUserByEmail(String email) {
+        return employeeRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
+    }
+
 }

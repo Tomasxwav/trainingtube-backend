@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,6 +42,17 @@ public class EmployeeController {
     public ResponseEntity<?> postEmployee(@RequestBody EmployeeModel employee) {
         EmployeeModel employeeCreated = employeeService.save(employee);
         return ResponseEntity.ok(employeeCreated);
+    }
+
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getMe(Authentication authentication) {
+        try {
+            String email = authentication.getName();
+            return ResponseEntity.ok(employeeService.getUserByEmail(email));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
     }
         
 
