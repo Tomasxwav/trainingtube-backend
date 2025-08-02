@@ -65,8 +65,38 @@ public class MetricsServiceImpl implements MetricsService {
     }
 
     @Override
-    public List<SupervisorMetricsDto> getAllSupervisorMetrics(Authentication authentication) {
-        return null;
+    public SupervisorMetricsDto getAllSupervisorMetrics(Authentication authentication) {
+        String email = authentication.getName();
+        
+        Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(email);
+        if (!employeeOpt.isPresent()) {
+            throw new RuntimeException("Empleado no encontrado con email: " + email);
+        }
+
+        DepartmentModel department = employeeOpt.get().getDepartment();
+        Long departmentId = department.getId();
+        String departmentName = department.getName();
+        Long totalEmployees = employeeRepository.countByDepartmentId(departmentId);
+        Long totalVideos = videoRepository.countByDepartment(department);
+        Long totalInteractions = (long) interactionRepository.findByEmployeeId(employeeOpt.get().getId()).size();
+        Long totalComments = (long) commentsRepository.findByEmployeeId(employeeOpt.get().getId()).size();
+        // Double averageCompletionRate = interactionRepository.getAverageProgressByEmployee(employeeOpt.get().getId());
+        //Long totalFavorites = videoRepository.countFavoritesByDepartmentId(departmentId);
+        Double averageCompletionRate = 0.0;
+        Long totalFavorites = (long) 0; 
+        
+        SupervisorMetricsDto metricsDto = new SupervisorMetricsDto(
+            departmentId,
+            departmentName,
+            totalEmployees,
+            totalVideos,
+            totalInteractions,
+            totalComments,
+            averageCompletionRate,
+            totalFavorites
+        );
+        
+        return metricsDto;
     }
 
     @Override

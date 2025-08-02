@@ -33,9 +33,9 @@ public class MetricsController {
     }
     
     @GetMapping("/supervisor")
-    public ResponseEntity<List<SupervisorMetricsDto>> getAllSupervisorMetrics(Authentication authentication) {
+    public ResponseEntity<SupervisorMetricsDto> getAllSupervisorMetrics(Authentication authentication) {
         try {
-            List<SupervisorMetricsDto> metrics = metricsService.getAllSupervisorMetrics(authentication);
+            SupervisorMetricsDto metrics = metricsService.getAllSupervisorMetrics(authentication);
             return ResponseEntity.ok(metrics);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();

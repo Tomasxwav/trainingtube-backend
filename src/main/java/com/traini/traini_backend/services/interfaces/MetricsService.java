@@ -12,7 +12,7 @@ import com.traini.traini_backend.dto.metrics.supervisor.SupervisorProgressDto;
 public interface MetricsService {
     List<EmployeeMetricsDto> getEmployeeMetrics(Authentication authentication);
 
-    List<SupervisorMetricsDto> getAllSupervisorMetrics(Authentication authentication);
+    SupervisorMetricsDto getAllSupervisorMetrics(Authentication authentication);
 
     List<AdminMetricsDto> getAllAdminMetrics(Authentication authentication);
 
