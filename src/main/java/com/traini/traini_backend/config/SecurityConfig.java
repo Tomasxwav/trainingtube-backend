@@ -54,7 +54,7 @@ public class SecurityConfig {
 
                  // Permisos para Supervisor y Empleado
                 .requestMatchers(
-                "/metrics/info/**"
+                "/metrics/employee/**"
                 ).hasAnyRole("SUPER_ADMIN", "SUPERVISOR", "EMPLOYEE")
 
                  // Permisos solo para Supervisor
