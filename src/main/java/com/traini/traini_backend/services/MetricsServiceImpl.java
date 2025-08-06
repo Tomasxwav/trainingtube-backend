@@ -221,7 +221,7 @@ public class MetricsServiceImpl implements MetricsService {
                 totalComments += commentsRepository.findByEmployeeId(emp.getId()).size();
             }
 
-            Double averageCompletionRate = totalVideos / (double) totalFinalized;
+            Double averageCompletionRate = (totalFinalized == 0) ? 0.0 : totalVideos / (double) totalFinalized;
 
             AdminMetricsDto adminMetricsDto = new AdminMetricsDto(
                 department.getId(),
