@@ -151,20 +151,6 @@ public class MetricsServiceImpl implements MetricsService {
     }
 
     @Override
-    public List<AdminMetricsDto> getAllAdminMetrics(Authentication authentication) {
-        String email = authentication.getName();
-
-        Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(email);
-        if (!employeeOpt.isPresent()) {
-            throw new RuntimeException("Empleado no encontrado con email: " + email);
-        }
-
-        DepartmentModel department = employeeOpt.get().getDepartment();
-
-        return null;
-    }
-
-    @Override
     public List<SupervisorProgressDto> getAllSupervisorProgress(Authentication authentication) {
         String email = authentication.getName();
 
@@ -174,8 +160,35 @@ public class MetricsServiceImpl implements MetricsService {
         }
 
         DepartmentModel department = employeeOpt.get().getDepartment();
-
+        
         List<EmployeeModel> employees = employeeRepository.findAllByDepartmentId(department.getId());
+        List<SupervisorProgressDto> progress = new java.util.ArrayList<>();
+
+        for (EmployeeModel emp : employees) {
+            int completedVideos = interactionRepository.findByEmployeeIdAndIsPending(emp.getId(), false).size();
+
+            progress.add(new SupervisorProgressDto(
+                emp.getId(),
+                emp.getName(),
+                completedVideos
+            ));
+        }
+        
+        return progress;
+        
+    }
+
+
+    @Override
+    public List<AdminMetricsDto> getAllAdminMetrics(Authentication authentication) {
+        String email = authentication.getName();
+
+        Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(email);
+        if (!employeeOpt.isPresent()) {
+            throw new RuntimeException("Empleado no encontrado con email: " + email);
+        }
+
+        DepartmentModel department = employeeOpt.get().getDepartment();
 
         return null;
     }
