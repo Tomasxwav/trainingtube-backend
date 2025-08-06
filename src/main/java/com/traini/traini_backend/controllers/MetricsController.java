@@ -23,9 +23,9 @@ public class MetricsController {
     private MetricsService metricsService;
     
     @GetMapping("/employee")
-    public ResponseEntity<List<EmployeeMetricsDto>> getEmployeeMetrics(Authentication authentication) {
+    public ResponseEntity<EmployeeMetricsDto> getEmployeeMetrics(Authentication authentication) {
         try {
-            List<EmployeeMetricsDto> metrics = metricsService.getEmployeeMetrics(authentication);
+            EmployeeMetricsDto metrics = metricsService.getEmployeeMetrics(authentication);
             return ResponseEntity.ok(metrics);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
@@ -33,9 +33,9 @@ public class MetricsController {
     }
     
     @GetMapping("/supervisor")
-    public ResponseEntity<SupervisorMetricsDto> getAllSupervisorMetrics(Authentication authentication) {
+    public ResponseEntity<SupervisorMetricsDto> getSupervisorMetrics(Authentication authentication) {
         try {
-            SupervisorMetricsDto metrics = metricsService.getAllSupervisorMetrics(authentication);
+            SupervisorMetricsDto metrics = metricsService.getSupervisorMetrics(authentication);
             return ResponseEntity.ok(metrics);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();

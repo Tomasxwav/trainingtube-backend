@@ -1,19 +1,25 @@
 package com.traini.traini_backend.services;
 
-import java.util.Arrays;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.traini.traini_backend.dto.metrics.admin.AdminMetricsDto;
+import com.traini.traini_backend.dto.metrics.employee.EmployeeActivityDto;
 import com.traini.traini_backend.dto.metrics.employee.EmployeeMetricsDto;
 import com.traini.traini_backend.dto.metrics.supervisor.SupervisorMetricsDto;
 import com.traini.traini_backend.dto.metrics.supervisor.SupervisorProgressDto;
 import com.traini.traini_backend.models.EmployeeModel;
 import com.traini.traini_backend.models.DepartmentModel;
+import com.traini.traini_backend.models.InteractionModel;
 import com.traini.traini_backend.repository.EmployeeRepository;
 import com.traini.traini_backend.repository.VideoRepository;
 import com.traini.traini_backend.repository.InteractionRepository;
@@ -36,7 +42,7 @@ public class MetricsServiceImpl implements MetricsService {
     private CommentsRepository commentsRepository;
     
     @Override
-    public List<EmployeeMetricsDto> getEmployeeMetrics(Authentication authentication) {
+    public EmployeeMetricsDto getEmployeeMetrics(Authentication authentication) {
         String email = authentication.getName();
         
         Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(email);
@@ -60,12 +66,57 @@ public class MetricsServiceImpl implements MetricsService {
             totalComments,
             totalInteractions
         );
-        
-        return Arrays.asList(metricsDto);
+        return metricsDto;
     }
 
     @Override
-    public SupervisorMetricsDto getAllSupervisorMetrics(Authentication authentication) {
+    public List<EmployeeActivityDto> getEmployeeActivity(Authentication authentication) {
+        String email = authentication.getName();
+        
+        Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(email);
+        if (!employeeOpt.isPresent()) {
+            throw new RuntimeException("Empleado no encontrado con email: " + email);
+        }
+
+        EmployeeModel employee = employeeOpt.get();
+        
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(30);
+        
+        Date startDateAsDate = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date endDateAsDate = Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        
+        List<InteractionModel> finalizedInteractions = interactionRepository
+            .findByEmployeeIdAndFinalizedDateBetween(employee.getId(), startDateAsDate, endDateAsDate);
+        
+        Map<LocalDate, Long> videosByDate = finalizedInteractions.stream()
+            .collect(Collectors.groupingBy(
+                interaction -> interaction.getFinalizedDate()
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate(),
+                Collectors.counting()
+            ));
+        
+        List<EmployeeActivityDto> activities = new java.util.ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            LocalDate currentDate = startDate.plusDays(i);
+            Date currentDateAsDate = Date.from(currentDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            Long videosCompleted = videosByDate.getOrDefault(currentDate, 0L);
+            
+            activities.add(new EmployeeActivityDto(
+                employee.getId(),
+                employee.getName(),
+                currentDateAsDate,
+                videosCompleted.intValue()
+            ));
+        }
+
+        return activities;
+    }
+
+    @Override
+    public SupervisorMetricsDto getSupervisorMetrics(Authentication authentication) {
         String email = authentication.getName();
         
         Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(email);
@@ -101,11 +152,31 @@ public class MetricsServiceImpl implements MetricsService {
 
     @Override
     public List<AdminMetricsDto> getAllAdminMetrics(Authentication authentication) {
+        String email = authentication.getName();
+
+        Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(email);
+        if (!employeeOpt.isPresent()) {
+            throw new RuntimeException("Empleado no encontrado con email: " + email);
+        }
+
+        DepartmentModel department = employeeOpt.get().getDepartment();
+
         return null;
     }
 
     @Override
     public List<SupervisorProgressDto> getAllSupervisorProgress(Authentication authentication) {
+        String email = authentication.getName();
+
+        Optional<EmployeeModel> employeeOpt = employeeRepository.findByEmail(email);
+        if (!employeeOpt.isPresent()) {
+            throw new RuntimeException("Empleado no encontrado con email: " + email);
+        }
+
+        DepartmentModel department = employeeOpt.get().getDepartment();
+
+        List<EmployeeModel> employees = employeeRepository.findAllByDepartmentId(department.getId());
+
         return null;
     }
 }
