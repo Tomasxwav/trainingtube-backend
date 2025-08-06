@@ -72,14 +72,4 @@ public class MetricsController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
-    @GetMapping("/supervisor/progress")
-    public ResponseEntity<List<SupervisorProgressDto>> getAllSupervisorProgress(Authentication authentication) {
-        try {
-            List<SupervisorProgressDto> progress = metricsService.getAllSupervisorProgress(authentication);
-            return ResponseEntity.ok(progress);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
 }
