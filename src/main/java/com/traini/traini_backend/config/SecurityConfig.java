@@ -60,7 +60,7 @@ public class SecurityConfig {
                  // Permisos solo para Supervisor
                 .requestMatchers(
                 "/employees/department",
-                "/metrics/department"
+                "/videos/supervisor/**"
                 ).hasAnyRole("SUPER_ADMIN", "SUPERVISOR")
 
                 // Permisos para Administrador

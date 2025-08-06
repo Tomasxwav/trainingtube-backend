@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.traini.traini_backend.dto.metrics.admin.AdminMetricsDto;
+import com.traini.traini_backend.dto.metrics.employee.EmployeeActivityDto;
 import com.traini.traini_backend.dto.metrics.employee.EmployeeMetricsDto;
 import com.traini.traini_backend.dto.metrics.supervisor.SupervisorMetricsDto;
 import com.traini.traini_backend.dto.metrics.supervisor.SupervisorProgressDto;
@@ -31,12 +32,32 @@ public class MetricsController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @GetMapping("/employee/activity")
+    public ResponseEntity<List<EmployeeActivityDto>> getEmployeeActivity(Authentication authentication) {
+        try {
+            List<EmployeeActivityDto> activity = metricsService.getEmployeeActivity(authentication);
+            return ResponseEntity.ok(activity);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
     
     @GetMapping("/supervisor")
     public ResponseEntity<SupervisorMetricsDto> getSupervisorMetrics(Authentication authentication) {
         try {
             SupervisorMetricsDto metrics = metricsService.getSupervisorMetrics(authentication);
             return ResponseEntity.ok(metrics);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/supervisor/progress")
+    public ResponseEntity<List<SupervisorProgressDto>> getSupervisorProgress(Authentication authentication) {
+        try {
+            List<SupervisorProgressDto> progress = metricsService.getAllSupervisorProgress(authentication);
+            return ResponseEntity.ok(progress);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
