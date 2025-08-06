@@ -24,6 +24,7 @@ import com.traini.traini_backend.repository.EmployeeRepository;
 import com.traini.traini_backend.repository.VideoRepository;
 import com.traini.traini_backend.repository.InteractionRepository;
 import com.traini.traini_backend.repository.CommentsRepository;
+import com.traini.traini_backend.repository.DepartmentRepository;
 import com.traini.traini_backend.services.interfaces.MetricsService;
 
 @Service
@@ -40,6 +41,9 @@ public class MetricsServiceImpl implements MetricsService {
     
     @Autowired
     private CommentsRepository commentsRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
     
     @Override
     public EmployeeMetricsDto getEmployeeMetrics(Authentication authentication) {
@@ -188,8 +192,48 @@ public class MetricsServiceImpl implements MetricsService {
             throw new RuntimeException("Empleado no encontrado con email: " + email);
         }
 
-        DepartmentModel department = employeeOpt.get().getDepartment();
+        List<DepartmentModel> departments = departmentRepository.findByActiveTrue();
+        if (departments.isEmpty()) {
+            throw new RuntimeException("No hay departamentos activos.");
+        }
 
-        return null;
+        List<AdminMetricsDto> metrics = new java.util.ArrayList<>();
+
+        for (DepartmentModel department : departments) {
+            int employeesCount = employeeRepository.findByDepartment(department).size();
+            Long totalVideos = videoRepository.countByDepartment(department);
+            
+            List<EmployeeModel> departmentEmployees = employeeRepository.findByDepartment(department);
+            Long totalInteractions = 0L;
+            Long totalFavorites = 0L;
+            Long totalFinalized = 0L;
+            for (EmployeeModel emp : departmentEmployees) {
+                totalInteractions += interactionRepository.findByEmployeeId(emp.getId()).size();
+                totalFavorites += interactionRepository.findByEmployeeIdAndIsFavorite(emp.getId(), true).size();
+                totalFinalized += interactionRepository.findByEmployeeIdAndIsPending(emp.getId(), false).size();
+            }
+            
+            Long totalComments = 0L;
+            for (EmployeeModel emp : departmentEmployees) {
+                totalComments += commentsRepository.findByEmployeeId(emp.getId()).size();
+            }
+
+            Double averageCompletionRate = totalVideos / (double) totalFinalized;
+
+            AdminMetricsDto adminMetricsDto = new AdminMetricsDto(
+                department.getId(),
+                department.getName(),
+                (long) employeesCount,
+                totalVideos,
+                totalInteractions,
+                totalComments,
+                averageCompletionRate, 
+                totalFavorites
+            );
+            
+            metrics.add(adminMetricsDto);
+        }
+
+        return metrics;
     }
 }

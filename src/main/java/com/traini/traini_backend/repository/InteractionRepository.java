@@ -16,7 +16,9 @@ public interface InteractionRepository
     extends JpaRepository<InteractionModel, Long> {
 
 
-     List<InteractionModel> findByEmployeeId(Long employeeId);
+    List<InteractionModel> findByEmployeeId(Long employeeId);
+
+    List<InteractionModel> findByVideoId(Long videoId);
     
     boolean existsByEmployeeIdAndVideoIdAndIsFavorite(Long employeeId, Long videoId, boolean isFavorite);
 

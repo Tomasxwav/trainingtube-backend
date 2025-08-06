@@ -20,8 +20,6 @@ public interface DepartmentRepository extends CrudRepository<DepartmentModel, Lo
     
     List<DepartmentModel> findAllByOrderByNameAsc();
 
-    DepartmentModel findByDepartmentId(Long id);
-
     // Multi-tenant methods
     List<DepartmentModel> findByCompanyAndActiveTrue(CompanyModel company);
     
