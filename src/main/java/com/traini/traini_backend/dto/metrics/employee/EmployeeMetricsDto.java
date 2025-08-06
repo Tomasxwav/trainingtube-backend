@@ -8,15 +8,17 @@ public class EmployeeMetricsDto {
     private final Long pendingVideos;
     private final Long totalComments;
     private final Long totalInteractions;
+    private final Long totalFavorites;
 
     public EmployeeMetricsDto(Long employeeId, String employeeName, Long totalVideos, 
-                             Long pendingVideos, Long totalComments, Long totalInteractions) {
+                             Long pendingVideos, Long totalComments, Long totalInteractions, Long totalFavorites) {
         this.employeeId = employeeId;
         this.employeeName = employeeName;
         this.totalVideos = totalVideos;
         this.pendingVideos = pendingVideos;
         this.totalComments = totalComments;
         this.totalInteractions = totalInteractions;
+        this.totalFavorites = totalFavorites;
     }
 
     public Long getEmployeeId() {
@@ -41,5 +43,9 @@ public class EmployeeMetricsDto {
 
     public Long getTotalInteractions() {
         return totalInteractions;
+    }
+
+    public Long getTotalFavorites() {
+        return totalFavorites;
     }
 }

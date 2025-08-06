@@ -61,6 +61,7 @@ public class MetricsServiceImpl implements MetricsService {
         Long pendingVideos = (long) interactionRepository.findByEmployeeIdAndIsPending(employee.getId(), true).size();
         Long totalComments = (long) commentsRepository.findByEmployeeId(employee.getId()).size();
         Long totalInteractions = (long) interactionRepository.findByEmployeeId(employee.getId()).size();
+        Long totalFavorites = (long) interactionRepository.findByEmployeeIdAndIsFavorite(employee.getId(), true).size();
         
         EmployeeMetricsDto metricsDto = new EmployeeMetricsDto(
             employee.getId(),
@@ -68,7 +69,9 @@ public class MetricsServiceImpl implements MetricsService {
             totalVideos,
             pendingVideos,
             totalComments,
-            totalInteractions
+            totalInteractions,
+            totalFavorites
+
         );
         return metricsDto;
     }
@@ -228,7 +231,8 @@ public class MetricsServiceImpl implements MetricsService {
                 totalInteractions,
                 totalComments,
                 averageCompletionRate, 
-                totalFavorites
+                totalFavorites,
+                totalFinalized
             );
             
             metrics.add(adminMetricsDto);

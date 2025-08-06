@@ -9,13 +9,14 @@ public class AdminMetricsDto {
     private Long totalComments;
     private Double averageCompletionRate;
     private Long totalFavorites;
+    private Long totalFinalized;
 
     public AdminMetricsDto() {
     }
 
     public AdminMetricsDto(Long departmentId, String departmentName, Long totalEmployees, Long totalVideos, 
                            Long totalInteractions, Long totalComments, Double averageCompletionRate, 
-                           Long totalFavorites) {
+                           Long totalFavorites, Long totalFinalized) {
         this.departmentId = departmentId;
         this.departmentName = departmentName;
         this.totalEmployees = totalEmployees;
@@ -24,6 +25,7 @@ public class AdminMetricsDto {
         this.totalComments = totalComments;
         this.averageCompletionRate = averageCompletionRate;
         this.totalFavorites = totalFavorites;
+        this.totalFinalized = totalFinalized;
     }
 
     public Long getDepartmentId() {
@@ -56,6 +58,10 @@ public class AdminMetricsDto {
 
     public Long getTotalFavorites() {
         return totalFavorites;
+    }
+
+    public Long getTotalFinalized() {
+        return totalFinalized;
     }
     
 }
