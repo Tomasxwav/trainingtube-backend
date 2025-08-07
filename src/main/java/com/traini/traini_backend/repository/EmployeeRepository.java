@@ -16,6 +16,8 @@ public interface EmployeeRepository extends CrudRepository<EmployeeModel, Long> 
 
     List<EmployeeModel> findByDepartment(DepartmentModel department);
 
+    List<EmployeeModel> findAllByDepartmentId(Long departmentId);
+
     boolean existsByEmail(String email);
 
     @Query("SELECT e.department FROM EmployeeModel e WHERE e.id = :employeeId")

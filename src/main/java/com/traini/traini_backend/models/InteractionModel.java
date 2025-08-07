@@ -45,6 +45,9 @@ public class InteractionModel {
     @Column(name = "last_interaction_date", nullable = false)
     private Date lastInteractionDate;
 
+    @Column(name = "finalized_date")
+    private Date finalizedDate;
+
     // Getters, Setters, Constructors...
     public InteractionModel() {
     }
@@ -121,6 +124,14 @@ public class InteractionModel {
 
     public void setLastInteractionDate(Date lastInteractionDate) {
         this.lastInteractionDate = lastInteractionDate;
+    }
+
+    public Date getFinalizedDate() {
+        return finalizedDate;
+    }
+
+    public void setFinalizedDate(Date finalizedDate) {
+        this.finalizedDate = finalizedDate;
     }
 
 }

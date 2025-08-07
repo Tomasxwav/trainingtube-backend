@@ -52,29 +52,36 @@ public class SecurityConfig {
                 "/employees/me"
                 ).authenticated()
 
+                 // Permisos para Supervisor y Empleado
+                .requestMatchers(
+                "/metrics/employee/**"
+                ).hasAnyRole("SUPER_ADMIN", "SUPERVISOR", "EMPLOYEE")
+
+                 // Permisos solo para Supervisor
+                .requestMatchers(
+                "/employees/department",
+                "/videos/supervisor/**",
+                "/metrics/supervisor/**"
+                ).hasAnyRole("SUPER_ADMIN", "SUPERVISOR")
+
                 // Permisos para Administrador
                 .requestMatchers(
                 "/employees/**",
                 "/supervisors/**",
-                "/metrics/**"
+                "/metrics/**",
+                "/metrics/admin"
                 ).hasAnyRole("SUPER_ADMIN", "ADMIN")
-                
-                // Permisos solo para Supervisor
-                .requestMatchers(
-                "/employees/department",
-                "/metrics/department"
-                ).hasAnyRole("SUPER_ADMIN", "SUPERVISOR")
-                
-                // Permisos para Supervisor y Empleado
-                .requestMatchers(
-                "/metrics/info/**"
-                ).hasAnyRole("SUPER_ADMIN", "SUPERVISOR", "EMPLOYEE")
 
                 // Permisos para Supervisor y Administrador
                 .requestMatchers(
                 "/auth/register",
                 "/videos/admin"
                 ).hasAnyRole("SUPER_ADMIN", "ADMIN", "SUPERVISOR")
+                
+                // Permisos exclusivos para Super Admin
+                .requestMatchers(
+                "/metrics/superadmin"
+                ).hasRole("SUPER_ADMIN")
 
                 .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())

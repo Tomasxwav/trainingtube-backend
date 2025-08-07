@@ -158,5 +158,14 @@ public class CommentsServiceImpl implements CommentsService {
         comment.setUpdatedAt(LocalDateTime.now());
         commentsRepository.save(comment);
     }
+
+
+    @Override
+    public List<CommentsModel> findAll(Authentication authentication) {
+        if (authentication == null) {
+            throw new IllegalArgumentException("Authentication cannot be null");
+        }
+        return (List<CommentsModel>) commentsRepository.findAll();
+    }
     
 }

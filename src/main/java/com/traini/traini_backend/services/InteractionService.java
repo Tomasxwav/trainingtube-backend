@@ -135,6 +135,10 @@ public class InteractionService {
        
        if (updateDto.getProgress() != null) {
            existingInteraction.setProgress(updateDto.getProgress());
+
+           if (updateDto.getProgress() == 100 && existingInteraction.getFinalizedDate() == null) {
+               existingInteraction.setFinalizedDate(new Date());
+           }
        }
        
        if (updateDto.getIsFavorite() != null) {

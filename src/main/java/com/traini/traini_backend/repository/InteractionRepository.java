@@ -1,5 +1,6 @@
 package com.traini.traini_backend.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +16,9 @@ public interface InteractionRepository
     extends JpaRepository<InteractionModel, Long> {
 
 
-     List<InteractionModel> findByEmployeeId(Long employeeId);
+    List<InteractionModel> findByEmployeeId(Long employeeId);
+
+    List<InteractionModel> findByVideoId(Long videoId);
     
     boolean existsByEmployeeIdAndVideoIdAndIsFavorite(Long employeeId, Long videoId, boolean isFavorite);
 
@@ -27,6 +30,9 @@ public interface InteractionRepository
 
     // Obtener todos los videos FAVORITOS de un empleado
     List<InteractionModel> findByEmployeeIdAndIsFavorite(Long employeeId, boolean isFavorite);
+
+    // Buscar interacciones finalizadas de un empleado en un rango de fechas
+    List<InteractionModel> findByEmployeeIdAndFinalizedDateBetween(Long employeeId, Date startDate, Date endDate);
 
     // Otra forma de obtener todos los videos PENDIENTES de un empleado 
     @Query("SELECT v FROM VideoModel v WHERE v.department.id = :departmentId AND EXISTS (SELECT 1 FROM InteractionModel i WHERE i.videoId = v.id AND i.employee.id = :employeeId AND i.isPending = true)")
