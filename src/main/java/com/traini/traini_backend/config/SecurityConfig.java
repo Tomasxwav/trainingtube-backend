@@ -42,38 +42,46 @@ public class SecurityConfig {
                 .requestMatchers("/companies/**")
                 .hasRole("SUPER_ADMIN")
 
+                // Permisos generales (todos los roles autenticados) - DEBE IR ANTES de /employees/**
+                .requestMatchers(
+                "/interactions/favorites/**", 
+                "/interactions/likes/**", 
+                "/videos/department/**",
+                "/interactions/pending/**",
+                "/comments/**",
+                "/employees/me"
+                ).authenticated()
+
+                 // Permisos para Supervisor y Empleado
+                .requestMatchers(
+                "/metrics/employee/**"
+                ).hasAnyRole("SUPER_ADMIN", "SUPERVISOR", "EMPLOYEE")
+
+                 // Permisos solo para Supervisor
+                .requestMatchers(
+                "/employees/department",
+                "/videos/supervisor/**",
+                "/metrics/supervisor/**"
+                ).hasAnyRole("SUPER_ADMIN", "SUPERVISOR")
+
                 // Permisos para Administrador
                 .requestMatchers(
                 "/employees/**",
                 "/supervisors/**",
-                "/videos/admin",
-                "/metrics/**"
+                "/metrics/**",
+                "/metrics/admin"
                 ).hasAnyRole("SUPER_ADMIN", "ADMIN")
-                
-                // Permisos solo para Supervisor
-                .requestMatchers(
-                "/employees/department",
-                "/metrics/department"
-                ).hasAnyRole("SUPER_ADMIN", "SUPERVISOR")
-                
-                // Permisos para Supervisor y Empleado
-                .requestMatchers(
-                "/metrics/info/**"
-                ).hasAnyRole("SUPER_ADMIN", "SUPERVISOR", "EMPLOYEE")
 
                 // Permisos para Supervisor y Administrador
                 .requestMatchers(
-                "/auth/register"
+                "/auth/register",
+                "/videos/admin"
                 ).hasAnyRole("SUPER_ADMIN", "ADMIN", "SUPERVISOR")
-
-                // Permisos generales (todos los roles autenticados)
+                
+                // Permisos exclusivos para Super Admin
                 .requestMatchers(
-                "/interactions/favorites/**", 
-                "/interactions/likes/**", 
-                "/videos/department",
-                "/interactions/pending/**",
-                "/comments/**"
-                ).authenticated()
+                "/metrics/superadmin"
+                ).hasRole("SUPER_ADMIN")
 
                 .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())

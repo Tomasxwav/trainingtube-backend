@@ -122,7 +122,9 @@ public class CommentsServiceImpl implements CommentsService {
             .orElseThrow(() -> new RuntimeException("Employee not found with email: " + email));
         
         comment.setEmployeeId(employee.getId());
-        
+        comment.setEmployeeName(employee.getName());
+        comment.setEmployeeDepartment(employee.getDepartment().getName());
+
         if (comment.getId() == null) {
             comment.setCreatedAt(LocalDateTime.now());
         } else {
@@ -155,6 +157,15 @@ public class CommentsServiceImpl implements CommentsService {
         comment.setIsDeleted(true);
         comment.setUpdatedAt(LocalDateTime.now());
         commentsRepository.save(comment);
+    }
+
+
+    @Override
+    public List<CommentsModel> findAll(Authentication authentication) {
+        if (authentication == null) {
+            throw new IllegalArgumentException("Authentication cannot be null");
+        }
+        return (List<CommentsModel>) commentsRepository.findAll();
     }
     
 }

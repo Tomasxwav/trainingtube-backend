@@ -72,4 +72,13 @@ public class CommentsController {
             return ResponseEntity.status(500).body("An error occurred while deleting the comment: " + e.getMessage());
         }
     }
+
+    @GetMapping
+    public ResponseEntity<?> getAllComments(Authentication authentication) {
+        try {
+            return ResponseEntity.ok(commentsService.findAll(authentication));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid authentication: " + e.getMessage());
+        }
+    }
 }

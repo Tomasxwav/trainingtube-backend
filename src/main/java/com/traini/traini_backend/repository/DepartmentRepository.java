@@ -19,7 +19,7 @@ public interface DepartmentRepository extends CrudRepository<DepartmentModel, Lo
     boolean existsByName(String name);
     
     List<DepartmentModel> findAllByOrderByNameAsc();
-    
+
     // Multi-tenant methods
     List<DepartmentModel> findByCompanyAndActiveTrue(CompanyModel company);
     

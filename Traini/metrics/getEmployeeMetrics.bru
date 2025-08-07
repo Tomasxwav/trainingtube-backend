@@ -1,0 +1,19 @@
+meta {
+  name: getEmployeeMetrics
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{url}}/metrics/employee
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmZXJAcHJ1ZWJhLmNvbSIsImF1dGhvcml0aWVzIjpbIlJPTEVfRU1QTE9ZRUUiLCJjYW5Db21tZW50IiwiY2FuRmF2b3JpdGVzIiwiY2FuTGlrZSIsImNhblZpZXdNeUludGVyYWN0aW9ucyIsImNhblZpZXdNeU1ldHJpY3MiLCJjYW5WaWV3VmlkZW9zRGVwYXJ0bWVudCJdLCJpYXQiOjE3NTQxNjAwNDYsImV4cCI6MTc1NDE2MDM0Nn0.aMj3xT4QMzsOaHZmPSeTHeAp2pmtwwhd36szlR2iCDxi0LFJghjxvzgY0ckEKPYv0R6H18W8jRTKOOyZhhj0pw
+}
+
+settings {
+  encodeUrl: true
+}

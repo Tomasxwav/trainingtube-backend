@@ -11,6 +11,8 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface VideoRepository extends CrudRepository<VideoModel, Long> {
     List<VideoModel> findByDepartment(DepartmentModel department);
+
+    Long countByDepartment(DepartmentModel department);
     
     // Multi-tenant methods
     @Query("SELECT v FROM VideoModel v WHERE v.department.company.id = :companyId")
