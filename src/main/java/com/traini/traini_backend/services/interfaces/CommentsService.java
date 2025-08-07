@@ -28,4 +28,6 @@ public interface CommentsService {
     CommentsModel save(CommentsModel comment, Authentication authentication);
     
     void delete(Long id, Authentication authentication);
+
+    List<CommentsModel> findAll(Authentication authentication);
 }
