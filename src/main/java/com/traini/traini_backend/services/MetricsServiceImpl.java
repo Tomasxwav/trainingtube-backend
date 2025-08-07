@@ -223,7 +223,7 @@ public class MetricsServiceImpl implements MetricsService {
 
             Double averageCompletionRate = 0.0;
             if (employeesCount > 0 && totalVideos > 0) {
-                averageCompletionRate = totalFinalized / (employeesCount * (double) totalVideos);
+                averageCompletionRate = 100 * (totalFinalized / (employeesCount * (double) totalVideos));
             }
 
             AdminMetricsDto adminMetricsDto = new AdminMetricsDto(
