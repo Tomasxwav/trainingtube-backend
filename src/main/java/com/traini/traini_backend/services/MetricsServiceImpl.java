@@ -88,10 +88,10 @@ public class MetricsServiceImpl implements MetricsService {
         EmployeeModel employee = employeeOpt.get();
         
         LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusDays(30);
+        LocalDate startDate = endDate.minusDays(29);
         
         Date startDateAsDate = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date endDateAsDate = Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date endDateAsDate = Date.from(endDate.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
         
         List<InteractionModel> finalizedInteractions = interactionRepository
             .findByEmployeeIdAndFinalizedDateBetween(employee.getId(), startDateAsDate, endDateAsDate);
